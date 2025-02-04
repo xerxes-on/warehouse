@@ -1,6 +1,10 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Web\OrderController;
+use App\Http\Controllers\Web\OrderItemController;
+use App\Http\Controllers\Web\ProductController;
+use App\Http\Controllers\Web\ShipmentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,6 +30,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::resource('products', ProductController::class);
+    Route::resource('orders', OrderController::class);
+    Route::resource('shipment', ShipmentController::class)
+        ->middleware('admin');
+    Route::prefix('cart')->group(function () {
+        Route::post('add', [OrderItemController::class, 'add'])->name('cart.add');
+    });
 });
 
 require __DIR__.'/auth.php';

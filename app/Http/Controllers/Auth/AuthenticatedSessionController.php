@@ -28,7 +28,7 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
-
+        session(['user_role' => auth()->user()->role->name]);
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 
@@ -40,7 +40,7 @@ class AuthenticatedSessionController extends Controller
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
-
+        session()->forget('user_role');
         $request->session()->regenerateToken();
 
         return redirect('/');
