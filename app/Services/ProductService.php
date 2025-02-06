@@ -25,7 +25,6 @@ class ProductService
             'name' => $validated['name'],
             'price' => $validated['price']
         ]);
-        session()->flash('message', '🥳 Product updated successfully');
         return $product;
     }
 
@@ -39,12 +38,6 @@ class ProductService
             'name' => $validated['name'],
             'price' => $validated['price']
         ]);
-        session()->flash('message', '🥳 Created Successfully');
         return $product;
-    }
-
-    public function destroy(Product $product)
-    {
-
     }
 }

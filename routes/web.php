@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\OrderItemController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Web\OrderController;
-use App\Http\Controllers\Web\OrderItemController;
 use App\Http\Controllers\Web\ProductController;
 use App\Http\Controllers\Web\ShipmentController;
 use Illuminate\Support\Facades\Route;
@@ -38,7 +38,6 @@ Route::middleware('auth')->group(function () {
         Route::get('shipments/delivering', [ShipmentController::class, 'showDelivering'])->name('shipment.delivering');
         Route::get('shipments/delivered', [ShipmentController::class, 'showDelivered'])->name('shipment.delivered');
         Route::get('shipments/returned', [ShipmentController::class, 'showReturned'])->name('shipment.returned');
-
     });
 
     Route::post('add', [OrderItemController::class, 'add'])->name('cart.add');

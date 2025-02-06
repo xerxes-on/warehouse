@@ -4,20 +4,23 @@ namespace App\Http\Controllers\Web;
 
 use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
+use App\Models\Branch;
 use App\Models\Order;
-use App\Services\OrderService;
+use App\Models\Warehouse;
+use App\Services\Orders\OrderCalculationService;
+use App\Services\Orders\OrderService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class OrderController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(): View
     {
-        return view('client.orders.index', ['orders' => Order::paginate(15)]);
+        return view('client.orders.index', [
+            'orders' => Order::paginate(15),
+            'canCreate' => false,
+        ]);
     }
 
     /**
@@ -39,9 +42,8 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Order $order): View
+    public function show(Order $order, OrderCalculationService $service): View
     {
-        $service = new OrderService();
         $details = $service->calculateOrder($order);
         return view('client.orders.show', ['order' => $order, 'details' => $details]);
     }
@@ -58,9 +60,8 @@ class OrderController extends Controller
      * Update the specified resource in storage.
      * @throws \Exception
      */
-    public function update(Request $request, Order $order): RedirectResponse
+    public function update(Request $request, Order $order, OrderService $service): RedirectResponse
     {
-        $service = new OrderService();
         try {
             $service->changeStatus($request, $order);
         } catch (\Exception $e) {
@@ -81,11 +82,19 @@ class OrderController extends Controller
 
     public function showDelivered(): View
     {
-        return view('client.orders.index', ['orders' => Order::where('status', OrderStatus::DELIVERED)->paginate(15)]);
+        return view('client.orders.index', [
+            'orders' => Order::where('status', OrderStatus::DELIVERED)->paginate(15),
+            'canCreate' => false
+        ]);
     }
 
     public function showOrdered(): View
     {
-        return view('client.orders.index', ['orders' => Order::where('status', OrderStatus::ORDERED)->paginate(15)]);
+        return view('client.orders.index', [
+            'orders' => Order::where('status', OrderStatus::ORDERED)->paginate(15),
+            'canCreate' => true,
+            'warehouses' => Warehouse::all(),
+            'branches' => Branch::all(),
+        ]);
     }
 }

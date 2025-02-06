@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class AdminMiddleware
 {
@@ -17,7 +18,7 @@ class AdminMiddleware
         $user = auth()->user();
 
         if (!$user || $user->role?->name !== 'admin') {
-            abort(403, 'Unauthorized access');
+            abort(Response::HTTP_UNAUTHORIZED, 'Unauthorized access');
         }
 
         return $next($request);

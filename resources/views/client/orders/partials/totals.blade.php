@@ -21,7 +21,7 @@
         @endif
         <tr id="tax-row" class="border-b text-sm">
             <td class="px-4 py-2 font-semibold">
-                Tax (<span class="fee-rate text-gray-500">{{ \App\Enums\Fees::$tax }}%</span>):
+                Tax (<span class="fee-rate text-gray-500">{{ \App\CustomConstants\Fees::$tax }}%</span>):
             </td>
             <td class="px-4 py-2 text-right">
                 ${{ $details['tax'] }}
@@ -30,7 +30,7 @@
         <tr id="store-fee-row" class="border-b text-sm">
             <td class="px-4 py-2 font-semibold">
                 Store Fee (<span
-                    class="fee-rate text-gray-500">{{ \App\Enums\Fees::$store }}%</span>):
+                    class="fee-rate text-gray-500">{{ \App\CustomConstants\Fees::$store }}%</span>):
             </td>
             <td class="px-4 py-2 text-right">
                 ${{ $details['storeFee'] }}
@@ -39,7 +39,7 @@
         <tr id="duties-row" class="border-b text-sm">
             <td class="px-4 py-2 font-semibold">
                 Custom Duties (<span
-                    class="fee-rate text-gray-500">{{ \App\Enums\Fees::$duties }}%</span>):
+                    class="fee-rate text-gray-500">{{ \App\CustomConstants\Fees::$duties }}%</span>):
             </td>
             <td class="px-4 py-2 text-right">
                 ${{ $details['dutiesFee'] }}

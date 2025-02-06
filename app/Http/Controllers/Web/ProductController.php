@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Traits\CanSetFlashMessageTrait;
 use App\Models\Product;
 use App\Services\ProductService;
 use Illuminate\Http\RedirectResponse;
@@ -11,6 +12,8 @@ use Illuminate\View\View;
 
 class ProductController extends Controller
 {
+    use CanSetFlashMessageTrait;
+
     private ProductService $service;
 
     public function __construct()
@@ -47,6 +50,7 @@ class ProductController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $product = $this->service->store($request);
+        $this->sendMessage('🥳 Created Successfully');
         return redirect()->route('products.show', ['product' => $product]);
     }
 
@@ -72,6 +76,7 @@ class ProductController extends Controller
     public function update(Request $request, Product $product): RedirectResponse
     {
         $this->service->update($request, $product);
+        $this->sendMessage('🥳 Product updated successfully');
         return redirect()->back();
     }
 
@@ -82,7 +87,7 @@ class ProductController extends Controller
     {
 //        right now its soft deletes TODO: think about other solutions
         $product->delete();
-        session()->flash('message', 'Product deleted successfully');
+        $this->sendMessage('Product deleted successfully');
         return redirect()->route('products.index');
     }
 }
