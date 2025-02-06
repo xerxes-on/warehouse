@@ -60,6 +60,14 @@ class User extends Authenticatable
 
     public function getCart(): Model
     {
-        return $this->orders()->where('status', OrderStatus::CART)->first();
+        $order = $this->orders()->where('status', OrderStatus::CART)->first();
+        if (!$order) {
+            $order = Order::create([
+                'user_id' => auth()->user()->id,
+                'status' => OrderStatus::CART,
+                'total_price' => 0,
+            ]);
+        }
+        return $order;
     }
 }

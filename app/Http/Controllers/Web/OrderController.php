@@ -6,6 +6,7 @@ use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Services\OrderService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -55,10 +56,19 @@ class OrderController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * @throws \Exception
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Order $order): RedirectResponse
     {
-        //
+        $service = new OrderService();
+        try {
+            $service->changeStatus($request, $order);
+        } catch (\Exception $e) {
+            session()->flash('message', 'Error '.$e->getMessage());
+            return redirect()->back();
+        }
+        session()->flash('message', 'Thanks, Order updated successfully 🤝');
+        return redirect()->route('orders.show', $order->id);
     }
 
     /**

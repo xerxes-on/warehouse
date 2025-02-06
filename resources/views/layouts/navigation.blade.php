@@ -39,19 +39,49 @@
                                 <x-dropdown-link :href="route('orders.index')">
                                     All
                                 </x-dropdown-link>
-                                <x-dropdown-link :href="route('profile.edit')">
+                                <x-dropdown-link :href="route('orders.ordered')">
                                     {{\App\Enums\OrderStatus::ORDERED->toString()}}
                                 </x-dropdown-link>
-                                <x-dropdown-link :href="route('profile.edit')">
+                                <x-dropdown-link :href="route('orders.delivered')">
                                     {{\App\Enums\OrderStatus::DELIVERED->toString()}}
                                 </x-dropdown-link>
                             </x-slot>
                         </x-dropdown>
                     </div>
                     @if (session('user_role') === 'admin')
-                        <x-nav-link :href="route('shipment.index')" :active="request()->routeIs('shipment.index')">
-                            Shipment
-                        </x-nav-link>
+                        <div class="hidden sm:flex sm:items-center sm:ms-6">
+                            <x-dropdown align="left" width="48">
+                                <x-slot name="trigger">
+                                    <button
+                                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+                                        <div>Shipment</div>
+
+                                        <div class="ms-1">
+                                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                                 viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
+                                                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                      clip-rule="evenodd"/>
+                                            </svg>
+                                        </div>
+                                    </button>
+                                </x-slot>
+                                <x-slot name="content">
+                                    <x-dropdown-link :href="route('shipment.index')">
+                                        All
+                                    </x-dropdown-link>
+                                    <x-dropdown-link :href="route('shipment.delivering')">
+                                        {{\App\Enums\ShipmentStatus::DELIVERING->toString()}}
+                                    </x-dropdown-link>
+                                    <x-dropdown-link :href="route('shipment.delivered')">
+                                        {{\App\Enums\ShipmentStatus::DELIVERED->toString()}}
+                                    </x-dropdown-link>
+                                    <x-dropdown-link :href="route('shipment.returned')">
+                                        {{\App\Enums\ShipmentStatus::RETURNED->toString()}}
+                                    </x-dropdown-link>
+                                </x-slot>
+                            </x-dropdown>
+                        </div>
                     @endif
                 </div>
             </div>
@@ -60,9 +90,8 @@
                 @if (session('user_role') != 'admin')
                     <x-nav-link :href="route('orders.show',[
                                             'order'=>Auth::user()->getCart()
-                                  ])"
-                                :active="request()->routeIs('dashboard')">
-                        <i class="fa-solid fa-cart-shopping fa-lg" style="color: #ff2e2e;"></i>
+                                  ])">
+                        <i class="fa-solid fa-cart-shopping fa-lg fa-bounce" style="color: #ff2e2e;"></i>
                     </x-nav-link>
                 @endif
                 <span id="total-products" class="text-white text-xs"></span>

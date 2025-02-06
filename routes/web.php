@@ -32,12 +32,23 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('products', ProductController::class);
-    Route::resource('orders', OrderController::class);
-    Route::resource('shipment', ShipmentController::class)
-        ->middleware('admin');
-    Route::prefix('cart')->group(function () {
-        Route::post('add', [OrderItemController::class, 'add'])->name('cart.add');
-    });
-});
 
+    Route::middleware('admin')->group(function () {
+        Route::resource('shipment', ShipmentController::class);
+        Route::get('shipments/delivering', [ShipmentController::class, 'showDelivering'])->name('shipment.delivering');
+        Route::get('shipments/delivered', [ShipmentController::class, 'showDelivered'])->name('shipment.delivered');
+        Route::get('shipments/returned', [ShipmentController::class, 'showReturned'])->name('shipment.returned');
+
+    });
+
+    Route::post('add', [OrderItemController::class, 'add'])->name('cart.add');
+    Route::post('order/remove-items', [OrderItemController::class, 'removeItems'])->name('cart.remove-items');
+    Route::post('order/updated-items', [OrderItemController::class, 'updateItems'])->name('cart.update-items');
+    Route::get('/order/{order}/refresh-details', [OrderItemController::class, 'refreshOrderDetails'])
+        ->name('orders.refresh-details');
+
+    Route::resource('orders', OrderController::class);
+    Route::get('ordered/orders', [OrderController::class, 'showOrdered'])->name('orders.ordered');
+    Route::get('delivered/orders', [OrderController::class, 'showDelivered'])->name('orders.delivered');
+});
 require __DIR__.'/auth.php';

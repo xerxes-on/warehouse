@@ -27,6 +27,11 @@ class Order extends Model
                 $builder->where('user_id', '=', auth()->user()->id);
             });
         }
+        if (session('user_role') == 'admin') {
+            static::addGlobalScope('cant_access_cart', function (Builder $builder) {
+                $builder->where('status', '!=', OrderStatus::CART);
+            });
+        }
     }
 
     public function user(): BelongsTo

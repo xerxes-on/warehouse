@@ -92,7 +92,6 @@
                 success: function (response) {
                     $('#total-products').text(response.data)
                     $('#cart-' + productId).toggleClass('animate-flip');
-                    // alert("Product added to cart");
                 },
                 error: function (e) {
                     alert("Error adding product to cart: " + (e.responseJSON.message || "Unknown error"));

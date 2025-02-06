@@ -20,7 +20,8 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             WarehouseSeeder::class,
             BranchSeeder::class,
-            ProductSeeder::class
+            ProductSeeder::class,
+            WarehouseProductsSeeder::class
         ]);
         User::factory()->count(10)->create();
         User::create([

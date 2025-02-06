@@ -18,10 +18,4 @@ class Product extends Model
     {
         return $this->belongsToMany(Order::class, 'order_items', 'product_id', 'order_id');
     }
-
-    public function warehouses(): BelongsToMany
-    {
-        return $this->belongsToMany(Warehouse::class, 'product_warehouse', 'product_id', 'warehouse_id');
-    }
-
 }

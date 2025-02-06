@@ -59,7 +59,7 @@
         {{ $slot }}
     </main>
 </div>
-@yield('footer-scripts')
+@stack('scripts')
 <script>
     if (document.getElementById('message')) {
         setTimeout(function () {
