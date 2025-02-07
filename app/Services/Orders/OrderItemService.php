@@ -40,7 +40,7 @@ class OrderItemService
         ]);
     }
 
-    private function createOrder(Order $order, Product $product, $quantity): void
+    private function createOrder(Order $order, Product $product, float $quantity): void
     {
         OrderItem::create([
             'order_id' => $order->id,
@@ -51,6 +51,7 @@ class OrderItemService
             'total_price' => $quantity * $product->price,
         ]);
     }
+
 
     public function removeItems(Request $request): bool
     {

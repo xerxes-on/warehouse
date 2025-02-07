@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Services\Orders;
 
-use App\CustomConstants\Fees;
 use App\Enums\OrderStatus;
 use App\Models\Order;
 use Carbon\Carbon;
@@ -16,19 +15,19 @@ class OrderCalculationService
     public function calculateOrder(Order $order): array
     {
         if ($order->status !== OrderStatus::CART) {
-            $cacheKey = 'order_calculation_'.$order->id;
+            $cacheKey = 'order_calculation_' . $order->id;
             $cachedResult = Cache::get($cacheKey);
             if ($cachedResult !== null) {
                 return $cachedResult;
             }
         }
-        $discountPercentage = $this->isSaturday() ? Fees::$saturdayDiscount : 0;
+        $discountPercentage = $this->isSaturday() ? config('fees.saturdayDiscount') : 0;
         $subtotal = $order->getSubtotal();
         $discount = $this->percentage($subtotal, $discountPercentage);
         $totalBeforeFees = $subtotal - $discount;
-        $storeFee = $this->percentage($totalBeforeFees, Fees::$store);
-        $dutiesFee = $this->percentage($totalBeforeFees, Fees::$duties);
-        $tax = $this->percentage($totalBeforeFees, Fees::$tax);
+        $storeFee = $this->percentage($totalBeforeFees, config('fees.store'));
+        $dutiesFee = $this->percentage($totalBeforeFees, config('fees.duties'));
+        $tax = $this->percentage($totalBeforeFees, config('fees.tax'));
 
         $result = [
             'total' => number_format($totalBeforeFees + $storeFee + $dutiesFee + $tax, 2),
@@ -60,7 +59,7 @@ class OrderCalculationService
         });
     }
 
-    private function percentage($total, $percent): float
+    private function percentage(float $total, float $percent): float
     {
         return ($total * $percent) / 100;
     }

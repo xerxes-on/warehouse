@@ -13,6 +13,7 @@ use App\Models\Shipment;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use phpDocumentor\Reflection\Types\Collection;
 use Symfony\Component\HttpFoundation\Response;
 
 class ShipmentService
@@ -66,7 +67,7 @@ class ShipmentService
     /**
      * @throws Exception
      */
-    private function removeProductsFromWarehouse($orders, Shipment $shipment): void
+    private function removeProductsFromWarehouse(Collection $orders, Shipment $shipment): void
     {
         foreach ($orders as $order) {
             $orderItems = OrderItem::where('order_id', $order->id)->get();
