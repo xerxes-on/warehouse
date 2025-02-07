@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Enums\ShipmentStatus;
@@ -13,9 +15,11 @@ class Shipment extends Model
     use HasFactory;
 
     protected $table = 'shipments';
+
     protected $fillable = ['date_shipped', 'warehouse_id', 'status', 'branch_id'];
+
     protected $casts = [
-        'status' => ShipmentStatus::class
+        'status' => ShipmentStatus::class,
     ];
 
     public function warehouse(): BelongsTo
@@ -32,5 +36,4 @@ class Shipment extends Model
     {
         return $this->hasMany(Order::class);
     }
-
 }

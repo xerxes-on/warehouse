@@ -17,7 +17,7 @@
                 <input type="number" name="price" id="price" step="0.01"
                        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                        required>
-                <x-input-error :messages="$errors->get('price')" class="mt-2" />
+                <x-input-error :messages="$errors->get('price')" class="mt-2"/>
 
             </div>
             <div class="text-right">

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Orders;
 
 use App\Models\Order;
@@ -17,6 +19,7 @@ class ProductAvailabilityService
                 ->get();
             $availability[$item->product_id] = $warehouses;
         }
+
         return $availability;
     }
 }

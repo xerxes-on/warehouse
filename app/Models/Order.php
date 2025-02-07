@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Enums\OrderStatus;
@@ -14,6 +16,7 @@ class Order extends Model
     use HasFactory;
 
     protected $table = 'orders';
+
     protected $fillable = ['total_price', 'status', 'user_id', 'shipment_id'];
 
     protected $casts = [
@@ -22,12 +25,12 @@ class Order extends Model
 
     protected static function booted(): void
     {
-        if (session('user_role') != 'admin') {
+        if (session('user_role') !== 'admin') {
             static::addGlobalScope('only_user\'s', function (Builder $builder) {
                 $builder->where('user_id', '=', auth()->user()->id);
             });
         }
-        if (session('user_role') == 'admin') {
+        if (session('user_role') === 'admin') {
             static::addGlobalScope('cant_access_cart', function (Builder $builder) {
                 $builder->where('status', '!=', OrderStatus::CART);
             });
@@ -44,13 +47,13 @@ class Order extends Model
         return $this->belongsTo(Shipment::class);
     }
 
-    public function orderItems(): HasMany
-    {
-        return $this->hasMany(OrderItem::class);
-    }
-
     public function getSubtotal(): float
     {
         return $this->orderItems()->sum('total_price');
+    }
+
+    public function orderItems(): HasMany
+    {
+        return $this->hasMany(OrderItem::class);
     }
 }

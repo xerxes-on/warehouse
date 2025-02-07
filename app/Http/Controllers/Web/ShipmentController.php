@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Web;
 
 use App\Enums\ShipmentStatus;
@@ -16,15 +18,6 @@ class ShipmentController extends Controller
 {
     use CanSetFlashMessageTrait;
 
-    protected ShipmentService $service;
-    protected UpdateShipmentService $updateShipmentService;
-
-    public function __construct(ShipmentService $service, UpdateShipmentService $updateShipmentService)
-    {
-        $this->service = $service;
-        $this->updateShipmentService = $updateShipmentService;
-    }
-
     /**
      * Display a listing of the resource.
      */
@@ -38,17 +31,14 @@ class ShipmentController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        //
-    }
+    public function create() {}
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, ShipmentService $service): RedirectResponse
     {
-        return redirect()->route('shipment.show', $this->service->createShipment($request));
+        return redirect()->route('shipment.show', $service->createShipment($request));
     }
 
     /**
@@ -59,10 +49,11 @@ class ShipmentController extends Controller
         return view('client.shipments.show', ['shipment' => $shipment]);
     }
 
-    public function update(Request $request, Shipment $shipment): RedirectResponse
+    public function update(Request $request, Shipment $shipment, UpdateShipmentService $service): RedirectResponse
     {
-        $this->updateShipmentService->updateShipment($request, $shipment) ?
+        $service->updateShipment($request, $shipment) ?
             $this->sendMessage('Status Updated') : $this->sendMessage('Error occurred');
+
         return redirect()->back();
     }
 

@@ -1,3 +1,5 @@
+@php use App\Enums\OrderStatus; @endphp
+@php use App\Enums\ShipmentStatus; @endphp
 <nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -40,10 +42,10 @@
                                     All
                                 </x-dropdown-link>
                                 <x-dropdown-link :href="route('orders.ordered')">
-                                    {{\App\Enums\OrderStatus::ORDERED->toString()}}
+                                    {{OrderStatus::ORDERED->toString()}}
                                 </x-dropdown-link>
                                 <x-dropdown-link :href="route('orders.delivered')">
-                                    {{\App\Enums\OrderStatus::DELIVERED->toString()}}
+                                    {{OrderStatus::DELIVERED->toString()}}
                                 </x-dropdown-link>
                             </x-slot>
                         </x-dropdown>
@@ -71,13 +73,13 @@
                                         All
                                     </x-dropdown-link>
                                     <x-dropdown-link :href="route('shipment.delivering')">
-                                        {{\App\Enums\ShipmentStatus::DELIVERING->toString()}}
+                                        {{ShipmentStatus::DELIVERING->toString()}}
                                     </x-dropdown-link>
                                     <x-dropdown-link :href="route('shipment.delivered')">
-                                        {{\App\Enums\ShipmentStatus::DELIVERED->toString()}}
+                                        {{ShipmentStatus::DELIVERED->toString()}}
                                     </x-dropdown-link>
                                     <x-dropdown-link :href="route('shipment.returned')">
-                                        {{\App\Enums\ShipmentStatus::RETURNED->toString()}}
+                                        {{ShipmentStatus::RETURNED->toString()}}
                                     </x-dropdown-link>
                                 </x-slot>
                             </x-dropdown>

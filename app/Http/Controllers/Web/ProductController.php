@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
@@ -14,17 +16,14 @@ class ProductController extends Controller
 {
     use CanSetFlashMessageTrait;
 
-    private ProductService $service;
-
     public function __construct()
     {
-        $this->service = new ProductService();
         $this->middleware('admin')->only([
             'store',
             'destroy',
             'create',
             'update',
-            'edit'
+            'edit',
         ]);
     }
 
@@ -47,10 +46,11 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, ProductService $service): RedirectResponse
     {
-        $product = $this->service->store($request);
+        $product = $service->store($request);
         $this->sendMessage('🥳 Created Successfully');
+
         return redirect()->route('products.show', ['product' => $product]);
     }
 
@@ -73,10 +73,11 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product): RedirectResponse
+    public function update(Request $request, Product $product, ProductService $service): RedirectResponse
     {
-        $this->service->update($request, $product);
+        $service->update($request, $product);
         $this->sendMessage('🥳 Product updated successfully');
+
         return redirect()->back();
     }
 
@@ -85,9 +86,10 @@ class ProductController extends Controller
      */
     public function destroy(Product $product): RedirectResponse
     {
-//        right now its soft deletes TODO: think about other solutions
+        //        right now its soft deletes TODO: think about other solutions
         $product->delete();
         $this->sendMessage('Product deleted successfully');
+
         return redirect()->route('products.index');
     }
 }

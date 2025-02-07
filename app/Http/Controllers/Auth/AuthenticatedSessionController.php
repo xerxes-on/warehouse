@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -29,6 +31,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
         session(['user_role' => auth()->user()->role->name]);
+
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 

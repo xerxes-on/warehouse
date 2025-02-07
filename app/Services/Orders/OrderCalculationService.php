@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Orders;
 
 use App\CustomConstants\Fees;
@@ -13,7 +15,7 @@ class OrderCalculationService
 {
     public function calculateOrder(Order $order): array
     {
-        if ($order->status != OrderStatus::CART) {
+        if ($order->status !== OrderStatus::CART) {
             $cacheKey = 'order_calculation_'.$order->id;
             $cachedResult = Cache::get($cacheKey);
             if ($cachedResult !== null) {
@@ -36,29 +38,30 @@ class OrderCalculationService
             'subtotal' => number_format($subtotal, 2),
             'totalBeforeFees' => number_format($totalBeforeFees, 2),
             'discount' => $discount,
-            'hasDiscount' => $discount > 0
+            'hasDiscount' => $discount > 0,
         ];
-        if ($order->status != OrderStatus::CART) {
+        if ($order->status !== OrderStatus::CART) {
             Cache::forever($cacheKey, $result);
         }
 
         return $result;
     }
 
-    private function percentage($total, $percent): float
-    {
-        return ($total * $percent) / 100;
-    }
-
     private function isSaturday(): bool
     {
         $expiresAt = Carbon::now()->endOfDay();
+
         return Cache::remember('isSaturday', $expiresAt, function () {
             $today = new DateTime();
             $dayOfWeek = $today->format('N');
             $dayOfMonth = $today->format('j');
 
-            return ($dayOfWeek == 6 && $dayOfMonth >= 8 && $dayOfMonth <= 14);
+            return $dayOfWeek === 6 && $dayOfMonth >= 8 && $dayOfMonth <= 14;
         });
+    }
+
+    private function percentage($total, $percent): float
+    {
+        return ($total * $percent) / 100;
     }
 }

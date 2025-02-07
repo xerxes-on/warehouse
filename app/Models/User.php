@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -48,11 +50,6 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function orders(): HasMany
-    {
-        return $this->hasMany(Order::class);
-    }
-
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
@@ -61,13 +58,19 @@ class User extends Authenticatable
     public function getCart(): Model
     {
         $order = $this->orders()->where('status', OrderStatus::CART)->first();
-        if (!$order) {
+        if (! $order) {
             $order = Order::create([
                 'user_id' => auth()->user()->id,
                 'status' => OrderStatus::CART,
                 'total_price' => 0,
             ]);
         }
+
         return $order;
+    }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Shipment;
 
 use App\Enums\OrderStatus;
@@ -8,6 +10,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\ProductWarehouse;
 use App\Models\Shipment;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,14 +24,15 @@ class ShipmentService
             DB::beginTransaction();
             $orders = Order::whereIn('id', $valid['ids'])->where('status', OrderStatus::ORDERED)->get();
             if ($orders->isEmpty()) {
-                throw new \Exception('Invalid IDs or status');
+                throw new Exception('Invalid IDs or status');
             }
             $shipment = $this->createNewShipment($valid);
             $this->updateOrderStatuses($valid, $shipment);
             $this->removeProductsFromWarehouse($orders, $shipment);
             DB::commit();
+
             return $shipment->id;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             abort(Response::HTTP_UNPROCESSABLE_ENTITY);
         }
@@ -39,7 +43,7 @@ class ShipmentService
         return $request->validate([
             'ids' => 'array|required',
             'warehouse_id' => 'required|exists:warehouses,id',
-            'branch_id' => 'required|exists:branches,id'
+            'branch_id' => 'required|exists:branches,id',
         ]);
     }
 
@@ -60,7 +64,7 @@ class ShipmentService
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function removeProductsFromWarehouse($orders, Shipment $shipment): void
     {
@@ -71,8 +75,8 @@ class ShipmentService
                     'warehouse_id' => $shipment->warehouse_id,
                     'product_id' => $orderItem->product_id,
                 ])->first();
-                if (!$warehouseProduct || $warehouseProduct->quantity < $orderItem->quantity) {
-                    throw new \Exception("Insufficient stock for product.");
+                if (! $warehouseProduct || $warehouseProduct->quantity < $orderItem->quantity) {
+                    throw new Exception('Insufficient stock for product.');
                 }
                 $warehouseProduct->decrement('amount', $orderItem->quantity);
                 if ($warehouseProduct->amount === 0) {

@@ -1,3 +1,4 @@
+@php use App\Enums\OrderStatus; @endphp
 <x-app-layout>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <h1 class="text-2xl text-center font-bold text-white mb-6">
@@ -13,7 +14,7 @@
                         <table class="min-w-full divide-y divide-gray-200" id="order-items-table">
                             <thead class="bg-gray-100">
                             <tr>
-                                @if($order->status == \App\Enums\OrderStatus::CART)
+                                @if($order->status == OrderStatus::CART)
                                     <th class="px-4 py-2 text-left text-gray-700 font-bold">Select</th>
                                 @endif
                                 <th class="px-4 py-2 text-left text-gray-700 font-bold">Product</th>
@@ -27,7 +28,7 @@
                                 <tr data-item-id="{{ $item->id }}"
                                     data-original-qty="{{ $item->quantity }}"
                                     data-product-id="{{$item->product_id}}">
-                                    @if($order->status == \App\Enums\OrderStatus::CART)
+                                    @if($order->status == OrderStatus::CART)
                                         <td class="px-4 py-2">
                                             <input
                                                 type="checkbox"
@@ -53,7 +54,7 @@
                                                 class="amount-input border rounded w-16 p-1 hidden"
                                                 value="{{ $item->quantity }}"
                                             />
-                                            @if($order->status == \App\Enums\OrderStatus::CART)
+                                            @if($order->status == OrderStatus::CART)
                                                 <i class="fas fa-pen text-blue-500 cursor-pointer edit-quantity"></i>
                                             @endif
                                         </div>
@@ -65,7 +66,7 @@
                             @endforeach
                             </tbody>
                         </table>
-                        @if($order->status == \App\Enums\OrderStatus::CART)
+                        @if($order->status == OrderStatus::CART)
                             <div class="flex items-center justify-end space-x-4 mb-4">
                                 <button
                                     id="delete-selected-btn"
@@ -85,12 +86,12 @@
                         @endif
                     </div>
                     @include('client.orders.partials.totals')
-                    @if($order->status == \App\Enums\OrderStatus::CART)
+                    @if($order->status == OrderStatus::CART)
                         <div class="flex items-center justify-end p-5">
                             <form method="POST" action="{{route('orders.update', $order->id)}}">
                                 @csrf
                                 @method('PUT')
-                                <input type="number" name="status" value="{{\App\Enums\OrderStatus::ORDERED}}"
+                                <input type="number" name="status" value="{{OrderStatus::ORDERED}}"
                                        hidden="">
                                 <x-secondary-button type="submit">
                                     Order
@@ -115,8 +116,8 @@
             };
             window.showOrder.routes = {
                 removeItems: "{{route("cart.remove-items")}}",
-                updateItems:'{{ route('cart.update-items') }}',
-                refreshItems:'{{ route("orders.refresh-details", $order->id) }}'
+                updateItems: '{{ route('cart.update-items') }}',
+                refreshItems: '{{ route("orders.refresh-details", $order->id) }}'
             }
         </script>
     @endpush

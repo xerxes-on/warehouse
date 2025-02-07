@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Shipment;
 
 use App\Enums\ShipmentStatus;
@@ -11,9 +13,10 @@ class UpdateShipmentService
     public function updateShipment(Request $request, Shipment $shipment): bool
     {
         $status = $request->input('status');
-        if (!$status) {
+        if (! $status) {
             return false;
         }
+
         return match ((int) $status) {
             ShipmentStatus::DELIVERED->value => $this->delivered($shipment),
             ShipmentStatus::RETURNED->value => $this->returned($shipment),
@@ -25,8 +28,9 @@ class UpdateShipmentService
     {
         $shipment->update([
             'status' => ShipmentStatus::DELIVERED->value,
-            'date_shipped' => now()
+            'date_shipped' => now(),
         ]);
+
         return true;
     }
 
@@ -35,6 +39,7 @@ class UpdateShipmentService
         $shipment->update([
             'status' => ShipmentStatus::RETURNED->value,
         ]);
+
         return true;
     }
 }

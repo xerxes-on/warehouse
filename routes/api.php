@@ -11,9 +11,10 @@
 |
 */
 
+use App\Http\Controllers\Api\ProductController;
+use Illuminate\Support\Facades\Route;
+//
 //Route::middleware('auth:sanctum')->group(function () {
-//    Route::prefix('cart')->group(function () {
-//        Route::post('add', [OrderItemController::class, 'add'])->name('cart.add');
-//    });
+    Route::get('products/search', [ProductController::class, 'searchProduct'])->name('products.search');
 //});
 

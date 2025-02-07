@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Orders;
 
 use App\Enums\OrderStatus;
@@ -20,10 +22,11 @@ class OrderService
         if ((int) $valid['status'] < (int) $order->status->value) {
             throw new Exception('Cannot downgrade an order');
         }
-        if ($order->status != OrderStatus::CART) {
+        if ($order->status !== OrderStatus::CART) {
             $order->update([
-                'status' => OrderStatus::from($valid['status'])
+                'status' => OrderStatus::from($valid['status']),
             ]);
+
             return;
         }
         $availability = ProductAvailabilityService::productsAvailability($order);
@@ -38,11 +41,11 @@ class OrderService
         if ($allAvailable) {
             $order->update([
                 'status' => OrderStatus::from($valid['status']),
-                'total_price' => $service->calculateOrder($order)['total']
+                'total_price' => $service->calculateOrder($order)['total'],
             ]);
+
             return;
         }
         throw new Exception('Some Products are out of stock');
     }
-
 }

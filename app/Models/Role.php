@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,9 +12,11 @@ class Role extends Model
 {
     use HasFactory;
 
-    protected $table = 'roles';
-    protected $fillable = ['name'];
     public $timestamps = false;
+
+    protected $table = 'roles';
+
+    protected $fillable = ['name'];
 
     public function users(): HasMany
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,6 +13,7 @@ class ProductWarehouse extends Model
     use HasFactory;
 
     protected $table = 'product_warehouse';
+
     protected $fillable = [
         'warehouse_id',
         'product_id',
@@ -22,4 +25,3 @@ class ProductWarehouse extends Model
         return $this->belongsTo(Warehouse::class);
     }
 }
-

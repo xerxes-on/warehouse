@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Product;
+use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -10,8 +13,16 @@ class ProductService
 {
     public function index()
     {
-        return Cache::remember('products', 60, function () {
-            return Product::paginate(10);
+        $allWarehouseProducts = collect();
+        $warehouses = Warehouse::with('warehouseProducts')->get();
+        foreach ($warehouses as $warehouse) {
+            $allWarehouseProducts = $allWarehouseProducts->merge($warehouse->warehouseProducts);
+        }
+
+        $productIds = $allWarehouseProducts->pluck('id')->toArray();
+
+        return Cache::remember('products', 60, function () use ($productIds) {
+            return Product::whereIn('id', $productIds)->paginate(12);
         });
     }
 
@@ -23,8 +34,9 @@ class ProductService
         ]);
         $product->update([
             'name' => $validated['name'],
-            'price' => $validated['price']
+            'price' => $validated['price'],
         ]);
+
         return $product;
     }
 
@@ -36,8 +48,18 @@ class ProductService
         ]);
         $product = Product::create([
             'name' => $validated['name'],
-            'price' => $validated['price']
+            'price' => $validated['price'],
         ]);
+
         return $product;
+    }
+
+    public function indexForAdmin(Warehouse $warehouse)
+    {
+        $products = $warehouse->warehouseProducts()->get();
+
+        return Cache::remember('products', 60, function () use ($products) {
+            return $products->paginate(20);
+        });
     }
 }
