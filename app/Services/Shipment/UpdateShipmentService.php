@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace App\Services\Shipment;
 
+use App\Enums\OrderStatus;
 use App\Enums\ShipmentStatus;
+use App\Http\Requests\Shipment\UpdateShipmentRequest;
 use App\Models\Shipment;
-use Illuminate\Http\Request;
 
 class UpdateShipmentService
 {
-    public function updateShipment(Request $request, Shipment $shipment): bool
+    public function updateShipment(UpdateShipmentRequest $request, Shipment $shipment): bool
     {
-        $status = $request->input('status');
-        if (! $status) {
-            return false;
-        }
-
-        return match ((int) $status) {
+        $status = $request->validated('status');
+        return match ((int)$status) {
             ShipmentStatus::DELIVERED->value => $this->delivered($shipment),
             ShipmentStatus::RETURNED->value => $this->returned($shipment),
             default => false,
@@ -26,20 +23,18 @@ class UpdateShipmentService
 
     private function delivered(Shipment $shipment): bool
     {
-        $shipment->update([
-            'status' => ShipmentStatus::DELIVERED->value,
-            'date_shipped' => now(),
-        ]);
-
+        $shipment->update(['status' => ShipmentStatus::DELIVERED, 'date_shipped' => now()]);
+        $order = $shipment->order;
+        $undeliveredShipments = $order->shipments()->where('status', '!=', ShipmentStatus::DELIVERED)->count();
+        if ($undeliveredShipments === 0) {
+            $order->update(['status' => OrderStatus::DELIVERED]);
+        }
         return true;
     }
 
     private function returned(Shipment $shipment): bool
     {
-        $shipment->update([
-            'status' => ShipmentStatus::RETURNED->value,
-        ]);
-
+        $shipment->update(['status' => ShipmentStatus::RETURNED]);
         return true;
     }
 }

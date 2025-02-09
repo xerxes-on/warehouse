@@ -6,7 +6,7 @@ namespace App\Http\Traits;
 
 trait CanSetFlashMessageTrait
 {
-    public function sendMessage(string $message): void
+    public function setMessage(string $message): void
     {
         session()->flash('message', $message);
     }

@@ -5,18 +5,20 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Orders\AddProductsToOrderRequest;
+use App\Http\Requests\Orders\RemoveItemsRequest;
+use App\Http\Requests\Products\EditProductRequest;
 use App\Http\Traits\CanSendJsonResponse;
 use App\Models\Order;
 use App\Services\Orders\OrderCalculationService;
 use App\Services\Orders\OrderItemService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class OrderItemController extends Controller
 {
     use CanSendJsonResponse;
 
-    public function add(Request $request, OrderItemService $orderItemService): JsonResponse
+    public function add(AddProductsToOrderRequest $request, OrderItemService $orderItemService): JsonResponse
     {
         $response = $orderItemService->addProduct($request);
 
@@ -25,7 +27,7 @@ class OrderItemController extends Controller
             $this->sendError();
     }
 
-    public function removeItems(Request $request, OrderItemService $orderItemService): JsonResponse
+    public function removeItems(RemoveItemsRequest $request, OrderItemService $orderItemService): JsonResponse
     {
         $response = $orderItemService->removeItems($request);
 
@@ -43,7 +45,7 @@ class OrderItemController extends Controller
             $this->sendError();
     }
 
-    public function updateItems(Request $request, OrderItemService $orderItemService): JsonResponse
+    public function updateItems(EditProductRequest $request, OrderItemService $orderItemService): JsonResponse
     {
         return $orderItemService->editItems($request) ?
             $this->sendResponse(null) :

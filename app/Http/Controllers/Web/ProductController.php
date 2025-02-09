@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Products\CreateProductRequest;
 use App\Http\Traits\CanSetFlashMessageTrait;
 use App\Models\Product;
 use App\Services\ProductService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -30,9 +30,10 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(ProductService $service): View
     {
-        return view('client.products.index', ['products' => $this->service->index()]);
+        $product = $service->index();
+        return view('client.products.index', ['products' => $product]);
     }
 
     /**
@@ -46,10 +47,10 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, ProductService $service): RedirectResponse
+    public function store(CreateProductRequest $request, ProductService $service): RedirectResponse
     {
         $product = $service->store($request);
-        $this->sendMessage('🥳 Created Successfully');
+        $this->setMessage('🥳 Created Successfully');
 
         return redirect()->route('products.show', ['product' => $product]);
     }
@@ -73,10 +74,10 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product, ProductService $service): RedirectResponse
+    public function update(CreateProductRequest $request, Product $product, ProductService $service): RedirectResponse
     {
         $service->update($request, $product);
-        $this->sendMessage('🥳 Product updated successfully');
+        $this->setMessage('🥳 Product updated successfully');
 
         return redirect()->back();
     }
@@ -86,9 +87,8 @@ class ProductController extends Controller
      */
     public function destroy(Product $product): RedirectResponse
     {
-        //        right now its soft deletes TODO: think about other solutions
         $product->delete();
-        $this->sendMessage('Product deleted successfully');
+        $this->setMessage('Product deleted successfully');
 
         return redirect()->route('products.index');
     }

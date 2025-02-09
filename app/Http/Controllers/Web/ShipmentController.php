@@ -6,12 +6,13 @@ namespace App\Http\Controllers\Web;
 
 use App\Enums\ShipmentStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Shipment\CreateShipmentRequest;
+use App\Http\Requests\Shipment\UpdateShipmentRequest;
 use App\Http\Traits\CanSetFlashMessageTrait;
 use App\Models\Shipment;
 use App\Services\Shipment\ShipmentService;
 use App\Services\Shipment\UpdateShipmentService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ShipmentController extends Controller
@@ -28,15 +29,7 @@ class ShipmentController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create() {}
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request, ShipmentService $service): RedirectResponse
+    public function store(CreateShipmentRequest $request, ShipmentService $service): RedirectResponse
     {
         return redirect()->route('shipment.show', $service->createShipment($request));
     }
@@ -46,13 +39,14 @@ class ShipmentController extends Controller
      */
     public function show(Shipment $shipment): View
     {
+        $shipment->load('shipmentItems.orderItem.product');
         return view('client.shipments.show', ['shipment' => $shipment]);
     }
 
-    public function update(Request $request, Shipment $shipment, UpdateShipmentService $service): RedirectResponse
+    public function update(UpdateShipmentRequest $request, Shipment $shipment, UpdateShipmentService $service): RedirectResponse
     {
         $service->updateShipment($request, $shipment) ?
-            $this->sendMessage('Status Updated') : $this->sendMessage('Error occurred');
+            $this->setMessage('Status Updated') : $this->setMessage('Error occurred');
 
         return redirect()->back();
     }

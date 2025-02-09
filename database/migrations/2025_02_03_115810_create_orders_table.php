@@ -15,7 +15,6 @@ return new class extends Migration {
             $table->unsignedFloat('total_price');
             $table->integer('status');
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('shipment_id')->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

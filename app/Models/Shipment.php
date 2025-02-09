@@ -16,7 +16,7 @@ class Shipment extends Model
 
     protected $table = 'shipments';
 
-    protected $fillable = ['date_shipped', 'warehouse_id', 'status', 'branch_id'];
+    protected $fillable = ['date_shipped', 'warehouse_id', 'status', 'branch_id', 'order_id'];
 
     protected $casts = [
         'status' => ShipmentStatus::class,
@@ -32,8 +32,13 @@ class Shipment extends Model
         return $this->belongsTo(Branch::class);
     }
 
-    public function orders(): HasMany
+    public function order(): BelongsTo
     {
-        return $this->hasMany(Order::class);
+        return $this->belongsTo(Order::class);
+    }
+
+    public function shipmentItems(): HasMany
+    {
+        return $this->hasMany(ShipmentItem::class);
     }
 }

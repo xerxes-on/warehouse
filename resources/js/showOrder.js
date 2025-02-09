@@ -1,7 +1,6 @@
 $(document).ready(function () {
     const $deleteBtn = $('#delete-selected-btn');
     const $saveBtn = $('#save-changes-btn');
-
     function finishEditing($row) {
         const $label = $row.find('.amount-label');
         const $input = $row.find('.amount-input');

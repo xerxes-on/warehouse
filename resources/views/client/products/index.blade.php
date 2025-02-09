@@ -35,8 +35,9 @@
                     <h2 class="text-lg font-semibold text-gray-200">
                         {{ $product->name }}
                     </h2>
-                    <div class="mt-2 text-xl font-bold text-gray-200">
-                        ${{ number_format($product->price, 2) }}
+                    <div class="mt-2 flex items-center justify-between  ">
+                        <p class="text-lg text-white">${{ number_format($product->price, 2) }}</p>
+                        <p class="px-1 py-1 text-white font-bold text-sm bg-amber-700 rounded-2xl text-right">Left: {{ $product->quantity_left }}</p>
                     </div>
                     @if (session('user_role') != 'admin')
 
@@ -49,7 +50,8 @@
                                 <input type="number"
                                        class="quantity-field w-16 text-center text-white bg-transparent h-5 border-none"
                                        value="1"
-                                       min="1">
+                                       min="1"
+                                       max="{{$product->quantity_left}}">
 
                                 <button type="button"
                                         class="increment-button text-xl text-white px-2 py-1 rounded">+
@@ -65,85 +67,14 @@
             </div>
         @endforeach
     </div>
-
-    <div class="mt-6">
+    <div class="mt-6 w-1/2 mx-auto">
         {{ $products->links() }}
     </div>
-    </div>
-
     <script>
-        $(document).ready(function () {
-            $('#simple-search').on('keyup', function () {
-                let needle = $(this).val();
-
-                if (needle.length < 2) {
-                    $('#search-results').addClass('hidden');
-                    return;
-                }
-
-                $.ajax({
-                    url: '{{ route("products.search") , }}',
-                    type: 'GET',
-                    data: {needle: needle},
-                    success: function (response) {
-                        let resultsHtml = '';
-                        if (response.data.length > 0) {
-                            resultsHtml += '<ul class="py-1 text-sm text-gray-200 divide-y divide-gray-600">';
-                            $.each(response.data, function (index, product) {
-                                resultsHtml += `<li><a href="/products/${product.id}" class="block px-4 py-2 hover:bg-gray-600">${product.name}</a></li>`;
-                            });
-                            resultsHtml += '</ul>';
-                            $('#search-results').html(resultsHtml);
-                            $('#search-results').removeClass('hidden');
-                        } else {
-                            $('#search-results').addClass('hidden');
-                        }
-                    },
-                    error: function (error) {
-                        console.error('Error:', error);
-                        $('#search-results').addClass('hidden');
-                    }
-                });
-            });
-        });
-
-        $(document).on('click', '.increment-button', function () {
-            let input = $(this).siblings('.quantity-field');
-            let currentVal = parseInt(input.val());
-            input.val(currentVal + 1);
-        });
-
-        $(document).on('click', '.decrement-button', function () {
-            let input = $(this).siblings('.quantity-field');
-            let currentVal = parseInt(input.val());
-            if (currentVal > 1) {
-                input.val(currentVal - 1);
-            }
-        });
-        $(document).on('click', '.add-to-cart', function (e) {
-            e.preventDefault();
-            let button = $(this);
-            let productId = button.data('product-id');
-
-            let quantityInput = button.closest('.product-card').find('.quantity-field');
-            let quantity = quantityInput.val();
-
-            $.ajax({
-                url: '{{ route("cart.add") }}',
-                type: 'POST',
-                data: {
-                    id: productId,
-                    quantity: quantity,
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function (response) {
-                    $('#total-products').text(response.data)
-                    $('#cart-' + productId).toggleClass('animate-flip');
-                },
-                error: function (e) {
-                    alert("Error adding product to cart: " + (e.responseJSON.message || "Unknown error"));
-                }
-            });
-        });
+        window.indexProducts = {}
+        window.indexProducts.routes = {
+            search:'{{ route("products.search") , }}',
+            addToCart: '{{ route("cart.add") }}',
+        }
     </script>
 </x-app-layout>

@@ -11,13 +11,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property mixed $orderItems
+ */
 class Order extends Model
 {
     use HasFactory;
 
     protected $table = 'orders';
 
-    protected $fillable = ['total_price', 'status', 'user_id', 'shipment_id'];
+    protected $fillable = ['total_price', 'status', 'user_id'];
 
     protected $casts = [
         'status' => OrderStatus::class,

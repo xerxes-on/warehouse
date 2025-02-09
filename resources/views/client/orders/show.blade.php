@@ -87,8 +87,17 @@
                     </div>
                     @include('client.orders.partials.totals')
                     @if($order->status == OrderStatus::CART)
-                        <div class="flex items-center justify-end p-5">
-                            <form method="POST" action="{{route('orders.update', $order->id)}}">
+                        <form method="POST" action="{{route('orders.update', $order->id)}}">
+                            <div class="flex items-center justify-end p-5">
+                                <div class="flex items-center">
+                                    <label class="mr-4">Branch</label>
+                                    <select id="branch" name="branch_id"
+                                            class="mx-2 rounded-md">
+                                        @foreach ($branches as $branch)
+                                            <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 @csrf
                                 @method('PUT')
                                 <input type="number" name="status" value="{{OrderStatus::ORDERED}}"
@@ -96,8 +105,9 @@
                                 <x-secondary-button type="submit">
                                     Order
                                 </x-secondary-button>
-                            </form>
-                        </div>
+                            </div>
+                        </form>
+
                     @endif
                 </div>
             @else

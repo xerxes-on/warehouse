@@ -30,7 +30,7 @@ class OrderCalculationService
         $tax = $this->percentage($totalBeforeFees, config('fees.tax'));
 
         $result = [
-            'total' => number_format($totalBeforeFees + $storeFee + $dutiesFee + $tax, 2),
+            'total' => $totalBeforeFees + $storeFee + $dutiesFee + $tax,
             'storeFee' => number_format($storeFee, 2),
             'dutiesFee' => number_format($dutiesFee, 2),
             'tax' => number_format($tax, 2),
@@ -40,7 +40,7 @@ class OrderCalculationService
             'hasDiscount' => $discount > 0,
         ];
         if ($order->status !== OrderStatus::CART) {
-            Cache::forever($cacheKey, $result);
+            Cache::forever('order_calculation_' . $order->id, $result);
         }
 
         return $result;
@@ -55,7 +55,7 @@ class OrderCalculationService
             $dayOfWeek = $today->format('N');
             $dayOfMonth = $today->format('j');
 
-            return $dayOfWeek === 6 && $dayOfMonth >= 8 && $dayOfMonth <= 14;
+            return $dayOfWeek == 6 && $dayOfMonth >= 8 && $dayOfMonth <= 14;
         });
     }
 

@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Web;
 
 use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Orders\ChangeOrderStatusRequest;
+use App\Http\Traits\CanSetFlashMessageTrait;
 use App\Models\Branch;
 use App\Models\Order;
 use App\Models\Warehouse;
@@ -13,11 +15,13 @@ use App\Services\Orders\OrderCalculationService;
 use App\Services\Orders\OrderService;
 use Exception;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class OrderController extends Controller
 {
+    use CanSetFlashMessageTrait;
+
     public function index(): View
     {
         return view('client.orders.index', [
@@ -26,52 +30,31 @@ class OrderController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create() {}
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request) {}
-
-    /**
-     * Display the specified resource.
-     */
     public function show(Order $order, OrderCalculationService $service): View
     {
         $details = $service->calculateOrder($order);
-
-        return view('client.orders.show', ['order' => $order, 'details' => $details]);
+        $branches = Cache::remember('branches', now()->addDay(), function () {
+            return Branch::all();
+        });
+        return view('client.orders.show', [
+            'order' => $order,
+            'details' => $details,
+            'branches' => $branches
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id) {}
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Order $order, OrderService $service): RedirectResponse
+    public function update(ChangeOrderStatusRequest $request, Order $order, OrderService $service): RedirectResponse
     {
         try {
-            $service->changeStatus($request, $order);
+            $service->checkout($request, $order);
         } catch (Exception $e) {
-            session()->flash('message', 'Error '.$e->getMessage());
-
+            $this->setMessage('Error ' . $e->getMessage());
             return redirect()->back();
         }
-        session()->flash('message', 'Thanks, Order updated successfully 🤝');
+        $this->setMessage('Thanks, Order updated successfully 🤝');
 
         return redirect()->route('orders.show', $order->id);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id) {}
 
     public function showDelivered(): View
     {

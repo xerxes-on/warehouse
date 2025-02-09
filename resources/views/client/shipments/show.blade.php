@@ -10,7 +10,6 @@
                 <span class="text-white">{{$shipment->status->tostring()}}</span>
             </h1>
         </div>
-
         <div class="bg-gray-800 rounded-lg p-6 mb-6">
             <h2 class="text-xl font-semibold text-white mb-2">Shipment Details</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -22,13 +21,13 @@
                 </div>
                 <div>
                     <p class="text-gray-300">
-                        <strong>Sent:</strong> {{ $shipment->date_shipped ? $shipment->date_shipped->format('Y-m-d H:i') : 'Not Shipped Yet' }}
+                        <strong>Sent:</strong> {{ $shipment->date_shipped ?: 'Not Shipped Yet' }}
                     </p>
                 </div>
             </div>
         </div>
-        <h1 class="text-center text-gray-200 text-xl font-bold mb-4">Orders in the shipment </h1>
-        <div class="flex px-2 justify-end space-x-2 items-end">
+        <h1 class="text-center text-gray-200 text-xl font-bold mb-4">Order of the shipment </h1>
+        <div class="flex px-2 justify-end space-x-2 items-end my-2">
             @if($shipment->status == ShipmentStatus::DELIVERING)
                 <form method="post" action="{{route('shipment.update', $shipment->id)}}">
                     @method('PUT')
@@ -50,28 +49,44 @@
                 </form>
             @endif
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            @foreach ($shipment->orders as $order)
-                <div
-                    class="border border-gray-300 shadow rounded-lg p-4 bg-gray-700">
-                    <a href="{{ route('orders.show', $order->id) }}">
-                        <div class="flex justify-between items-start mb-2">
-                            <h2 class="text-lg font-semibold text-gray-200">Order #{{ $order->id }}</h2>
-                            <p class="bg-amber-700 text-white font-bold rounded-2xl py-1 px-2 text-lg">{{$order->status->toString()}}</p>
-                        </div>
-                        <div>
-                            @foreach ($order->orderItems as $product)
-                                <div class="mb-2 border-b flex border-gray-600 pb-1">
-                                    <p class="inline text-gray-300">{{ $product->price ?? 'N/A' }}
-                                        x {{ $product->quantity }}</p>
-                                    <p class="inline text-gray-300"> = ${{$product->total_price}}</p>
-                                </div>
+        <div class="flex justify-center items-center w-full">
+            <div
+                class="border border-gray-300 w-1/2 shadow rounded-lg p-4 bg-gray-700">
+                <a href="{{ route('orders.show', $shipment->order->id) }}">
+                    <div class="flex justify-between items-start mb-2">
+                        <h2 class="text-lg font-semibold text-gray-200">Order #{{ $shipment->order->id  }}</h2>
+                        <p class="bg-amber-700 text-white font-bold rounded-2xl py-1 px-2 text-lg">{{$shipment->order->status->toString()}}</p>
+                    </div>
+                    <div>
+                        <table class="min-w-full divide-y divide-gray-600">
+                            <thead>
+                            <tr>
+                                <th class="px-4 py-2 text-left text-white">Product</th>
+                                <th class="px-4 py-2 text-left text-white">Price</th>
+                                <th class="px-4 py-2 text-left text-white">Quantity</th>
+                                <th class="px-4 py-2 text-left text-white">Total</th>
+                            </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-600">
+                            @foreach ($shipment->shipmentItems as $item)
+                                <tr>
+                                    <td class="px-4 py-2 text-white">{{ $item->orderItem->product->name }}</td>
+                                    <td class="px-4 py-2 text-gray-300">
+                                        ${{ $item->orderItem->product->price ?? 'N/A' }}
+                                    </td>
+                                    <td class="px-4 py-2 text-gray-300">
+                                        {{ $item->orderItem->quantity }}
+                                    </td>
+                                    <td class="px-4 py-2 text-gray-300">
+                                        ${{ $item->orderItem->total_price }}
+                                    </td>
+                                </tr>
                             @endforeach
-                            <h1 class="text-gray-300 text-end">${{$order->total_price}}</h1>
-                        </div>
-                    </a>
-                </div>
-            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
 </x-app-layout>

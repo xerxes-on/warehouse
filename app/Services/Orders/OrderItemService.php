@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace App\Services\Orders;
 
+use App\Http\Requests\Orders\AddProductsToOrderRequest;
+use App\Http\Requests\Orders\RemoveItemsRequest;
+use App\Http\Requests\Products\EditProductRequest;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class OrderItemService
 {
-    public function addProduct(Request $request): int
+    public function addProduct(AddProductsToOrderRequest $request): int
     {
-        $validated = $this->validateAddProduct($request);
+        $validated = $request->validated();
         $product = Product::find($validated['id']);
-        $user = User::find(auth()->user()->id);
+        $user = auth()->user();
         $order = $user->getCart();
         $existing = $order->orderItems()->where('product_id', $product->id)->first();
         if ($existing) {
@@ -27,20 +29,13 @@ class OrderItemService
 
             return $order->orderItems->unique('product_id')->count();
         }
-        $this->createOrder($order, $product, $validated['quantity']);
+        $this->createOrder($order, $product, intval($validated['quantity']));
 
         return $order->orderItems->unique('product_id')->count();
     }
 
-    private function validateAddProduct(Request $request): array
-    {
-        return $request->validate([
-            'id' => 'numeric|required|exists:products',
-            'quantity' => 'numeric|required|min:1',
-        ]);
-    }
 
-    private function createOrder(Order $order, Product $product, float $quantity): void
+    private function createOrder(Order $order, Product $product, int $quantity): void
     {
         OrderItem::create([
             'order_id' => $order->id,
@@ -52,26 +47,21 @@ class OrderItemService
         ]);
     }
 
-
-    public function removeItems(Request $request): bool
+    public function removeItems(RemoveItemsRequest $request): bool
     {
-        $validated = $request->validate([
-            'item_ids' => 'array|required',
-        ]);
-        $user = User::find(auth()->user()->id);
+        $validated = $request->validated();
+        $user = auth()->user();
         $order = $user->getCart();
         $order->orderItems()->whereIn('product_id', $validated['item_ids'])->delete();
 
         return true;
     }
 
-    public function editItems(Request $request): bool
+    public function editItems(EditProductRequest $request): bool
     {
         //        TODO: need to optimize this
-        $data = $request->validate([
-            'products' => 'required|array',
-        ]);
-        $order = User::find(auth()->user()->id)->getCart();
+        $data = $request->validated();
+        $order = auth()->user()->getCart();
         foreach ($data['products'] as $item) {
             $orderItem = $order->orderItems()->where('product_id', $item['id'])->first();
             if ($orderItem && is_numeric($item['amount'])) {

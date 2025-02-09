@@ -49,7 +49,7 @@
         <tr id="total-row" class="border-t text-lg bg-blue-300">
             <td class="px-4 py-2 font-bold">Total:</td>
             <td class="px-4 py-2 font-bold text-right">
-                ${{ $details['total'] }}
+                ${{ number_format($details['total'], 2) }}
             </td>
         </tr>
         </tbody>

@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->foreignId('warehouse_id')->constrained()->cascadeOnDelete();
             $table->integer('status');
             $table->foreignId('branch_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('order_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
