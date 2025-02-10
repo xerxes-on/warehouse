@@ -6,11 +6,9 @@ namespace App\Http\Controllers\Web;
 
 use App\Enums\ShipmentStatus;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Shipment\CreateShipmentRequest;
 use App\Http\Requests\Shipment\UpdateShipmentRequest;
 use App\Http\Traits\CanSetFlashMessageTrait;
 use App\Models\Shipment;
-use App\Services\Shipment\ShipmentService;
 use App\Services\Shipment\UpdateShipmentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -19,9 +17,6 @@ class ShipmentController extends Controller
 {
     use CanSetFlashMessageTrait;
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(): View
     {
         return view('client.shipments.index', [
@@ -29,14 +24,6 @@ class ShipmentController extends Controller
         ]);
     }
 
-    public function store(CreateShipmentRequest $request, ShipmentService $service): RedirectResponse
-    {
-        return redirect()->route('shipment.show', $service->createShipment($request));
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(Shipment $shipment): View
     {
         $shipment->load('shipmentItems.orderItem.product');
