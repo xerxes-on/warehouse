@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterUserRequest;
+use App\Http\Requests\Auth\ResetPasswordRequest;
+use App\Http\Requests\Auth\UpdatePasswordRequest;
 use App\Http\Traits\CanSendJsonResponse;
 use App\Models\Role;
 use App\Models\User;
@@ -12,7 +15,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
 class AuthenticateUserController extends Controller
@@ -33,7 +35,7 @@ class AuthenticateUserController extends Controller
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
-        Auth::attempt(['email'=>$user->email, 'password'=>$user->password]);
+        Auth::attempt(['email' => $user->email, 'password' => $user->password]);
         $token = $user->createToken('client_token')->plainTextToken;
 
         return $this->sendResponse(['token' => $token]);
@@ -52,14 +54,8 @@ class AuthenticateUserController extends Controller
     /**
      * Register a new user and issue a Sanctum token.
      */
-    public function register(Request $request): JsonResponse
+    public function register(RegisterUserRequest $request): JsonResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'confirmed', Password::defaults()],
-        ]);
-
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -77,12 +73,9 @@ class AuthenticateUserController extends Controller
     /**
      * Update the authenticated user's password.
      */
-    public function updatePassword(Request $request): JsonResponse
+    public function updatePassword(UpdatePasswordRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'current_password' => ['required', 'current_password'],
-            'password' => ['required', Password::defaults(), 'confirmed'],
-        ]);
+        $validated = $request->validated();
 
         $request->user()->update([
             'password' => Hash::make($validated['password']),
@@ -96,12 +89,8 @@ class AuthenticateUserController extends Controller
      *
      * @throws ValidationException
      */
-    public function resetPassword(Request $request): JsonResponse
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
-        $request->validate([
-            'email' => ['required', 'email'],
-        ]);
-
         $status = \Illuminate\Support\Facades\Password::sendResetLink(
             $request->only('email')
         );
