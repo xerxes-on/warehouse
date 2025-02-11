@@ -65,7 +65,7 @@ $(document).on('click', '.add-to-cart', function (e) {
         data: {
             id: productId,
             quantity: quantity,
-            _token: '{{ csrf_token() }}'
+            _token: window.indexProducts.vars.csrf,
         },
         success: function (response) {
             $('#total-products').text(response.data)

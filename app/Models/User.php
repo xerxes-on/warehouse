@@ -7,9 +7,9 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\OrderStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -55,19 +55,19 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
-    public function getCart(): Model
+    public function cart(): HasOne
     {
-        $order = $this->orders()->where('status', OrderStatus::CART)->first();
-        if (! $order) {
-            $order = Order::create([
-                'user_id' => auth()->user()->id,
-                'status' => OrderStatus::CART,
-                'total_price' => 0,
-            ]);
-        }
-
-        return $order;
+        return $this->hasOne(Order::class)
+            ->where('status', OrderStatus::CART)
+            ->withDefault(function ($order) {
+                $order->user_id = auth()->id();
+                $order->status = OrderStatus::CART;
+                $order->total_price = 0;
+                $order->save();
+                return $order;
+            });
     }
+
 
     public function orders(): HasMany
     {

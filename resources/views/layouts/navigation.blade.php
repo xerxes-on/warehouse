@@ -91,7 +91,7 @@
             <div class="hidden sm:flex sm:items-center sm:ms-6 relative">
                 @if (session('user_role') != 'admin')
                     <x-nav-link :href="route('orders.show',[
-                                            'order'=>Auth::user()->getCart()
+                                            'order'=>auth()->user()->cart
                                   ])">
                         <i class="fa-solid fa-cart-shopping fa-lg fa-bounce" style="color: #ff2e2e;"></i>
                     </x-nav-link>

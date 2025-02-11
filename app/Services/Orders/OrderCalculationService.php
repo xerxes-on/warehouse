@@ -21,13 +21,13 @@ class OrderCalculationService
                 return $cachedResult;
             }
         }
-        $discountPercentage = $this->isSaturday() ? config('fees.saturdayDiscount') : 0;
+        $discountPercentage = $this->isSaturday() ? config('fees.saturdayDiscount',0):0;
         $subtotal = $order->getSubtotal();
         $discount = $this->percentage($subtotal, $discountPercentage);
         $totalBeforeFees = $subtotal - $discount;
-        $storeFee = $this->percentage($totalBeforeFees, config('fees.store'));
-        $dutiesFee = $this->percentage($totalBeforeFees, config('fees.duties'));
-        $tax = $this->percentage($totalBeforeFees, config('fees.tax'));
+        $storeFee = $this->percentage($totalBeforeFees, config('fees.store',5));
+        $dutiesFee = $this->percentage($totalBeforeFees, config('fees.duties',7.3));
+        $tax = $this->percentage($totalBeforeFees, config('fees.tax',2.69));
 
         $result = [
             'total' => $totalBeforeFees + $storeFee + $dutiesFee + $tax,

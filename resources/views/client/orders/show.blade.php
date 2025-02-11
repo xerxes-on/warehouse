@@ -4,6 +4,9 @@
         <h1 class="text-2xl text-center font-bold text-white mb-6">
             Order #{{ $order->id }}
         </h1>
+        @if(session('user_role')==='admin')
+            @include('client.orders.partials.shipments', $order)
+        @endif
         <div class="flex justify-center">
             @if(count($order->orderItems)>=1)
                 <div class="bg-white rounded-2xl p-6 w-full max-w-2xl">

@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <h1 class="text-2xl font-bold text-white mb-6">Product</h1>
-        <div class="flex justify-between items-center">
+        <div class="flex justify-between product-card items-center">
             <div class="rounded-lg">
                 <img src="/images/cat.jpg"
                      alt="Random Cat for {{ $product->name }}"
@@ -22,10 +22,27 @@
                                 </button>
                             </form>
                         @else
-                            <a href="{{ route('products.show', $product->id) }}"
-                               class="text-indigo-600 hover:underline">
-                                <i class="fa-solid fa-cart-shopping" style="color: #ff2e2e;"></i>
-                            </a>
+                            <div class="mt-3 flex items-center justify-between space-x-2">
+                                <div>
+                                    <button type="button"
+                                            class="decrement-button text-lg   text-white px-2 py-1 rounded">-
+                                    </button>
+
+                                    <input type="number"
+                                           class="quantity-field w-16 text-center text-white bg-transparent h-5 border-none"
+                                           value="1"
+                                           min="1"
+                                           max="{{$product->quantity_left}}">
+
+                                    <button type="button"
+                                            class="increment-button text-xl text-white px-2 py-1 rounded">+
+                                    </button>
+                                </div>
+                                <button type="button" class="add-to-cart rounded" data-product-id="{{ $product->id }}">
+                                    <i id="cart-{{$product->id}}" class="fa-solid fa-cart-shopping"
+                                       style="color: #ff2e2e;"></i>
+                                </button>
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -64,4 +81,14 @@
             @endif
         </div>
     </div>
+    <script>
+        window.indexProducts = {}
+        window.indexProducts.routes = {
+            addToCart: '{{ route("cart.add") }}',
+        }
+        window.indexProducts.vars = {
+            csrf: '{{ csrf_token() }}',
+        }
+    </script>
+
 </x-app-layout>

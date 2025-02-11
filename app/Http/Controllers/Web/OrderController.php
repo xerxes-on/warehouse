@@ -37,7 +37,7 @@ class OrderController extends Controller
             return Branch::all();
         });
         return view('client.orders.show', [
-            'order' => $order,
+            'order' => $order->load('shipments'),
             'details' => $details,
             'branches' => $branches
         ]);

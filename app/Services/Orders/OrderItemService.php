@@ -19,7 +19,7 @@ class OrderItemService
         $validated = $request->validated();
         $product = Product::find($validated['id']);
         $user = auth()->user();
-        $order = $user->getCart();
+        $order = $user->cart;
         $existing = $order->orderItems()->where('product_id', $product->id)->first();
         if ($existing) {
             $existing->update([
@@ -51,7 +51,7 @@ class OrderItemService
     {
         $validated = $request->validated();
         $user = auth()->user();
-        $order = $user->getCart();
+        $order = $user->cart;
         $order->orderItems()->whereIn('product_id', $validated['item_ids'])->delete();
 
         return true;
@@ -61,7 +61,7 @@ class OrderItemService
     {
         //        TODO: need to optimize this
         $data = $request->validated();
-        $order = auth()->user()->getCart();
+        $order = auth()->user()->cart;
         foreach ($data['products'] as $item) {
             $orderItem = $order->orderItems()->where('product_id', $item['id'])->first();
             if ($orderItem && is_numeric($item['amount'])) {

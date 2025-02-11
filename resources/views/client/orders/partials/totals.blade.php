@@ -22,7 +22,7 @@
         @endif
         <tr id="tax-row" class="border-b text-sm">
             <td class="px-4 py-2 font-semibold">
-                Tax (<span class="fee-rate text-gray-500">{{ config('fees.tax') }}%</span>):
+                Tax (<span class="fee-rate text-gray-500">{{ config('fees.tax',2.69) }}%</span>):
             </td>
             <td class="px-4 py-2 text-right">
                 ${{ $details['tax'] }}
@@ -31,7 +31,7 @@
         <tr id="store-fee-row" class="border-b text-sm">
             <td class="px-4 py-2 font-semibold">
                 Store Fee (<span
-                    class="fee-rate text-gray-500">{{ config('fees.store') }}%</span>):
+                    class="fee-rate text-gray-500">{{ config('fees.store',5) }}%</span>):
             </td>
             <td class="px-4 py-2 text-right">
                 ${{ $details['storeFee'] }}
@@ -40,7 +40,7 @@
         <tr id="duties-row" class="border-b text-sm">
             <td class="px-4 py-2 font-semibold">
                 Custom Duties (<span
-                    class="fee-rate text-gray-500">{{ config('fees.duties') }}%</span>):
+                    class="fee-rate text-gray-500">{{ config('fees.duties',3.35) }}%</span>):
             </td>
             <td class="px-4 py-2 text-right">
                 ${{ $details['dutiesFee'] }}

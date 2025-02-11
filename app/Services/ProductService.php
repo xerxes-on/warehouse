@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Http\Requests\Products\CreateProductRequest;
+use App\Http\Requests\Products\SearchProductsRequest;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductWarehouse;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 
 class ProductService
 {
@@ -25,6 +27,29 @@ class ProductService
             return $product;
         });
         return $products;
+    }
+
+    public function show(Product $product)
+    {
+        $productId = 123;
+
+        $totalQuantity = ProductWarehouse::where('product_id', $productId)
+            ->where('amount', '>', 0)
+            ->sum('amount');
+
+        if ($totalQuantity > 0) {
+            $product = Product::find($productId);
+
+            if (!$product) {
+                $product->quantity_left = $totalQuantity;
+                return $product;
+            }
+
+
+        } else {
+            // Handle the case where the product is not found in the warehouse (no stock)
+            return response()->json(['message' => 'Product not found in warehouse or out of stock'], 404); // Or return null, or an appropriate message
+        }
     }
 
     public function update(CreateProductRequest $request, Product $product): Product
@@ -83,4 +108,10 @@ class ProductService
         return $allocations;
     }
 
+    public function searchProduct(SearchProductsRequest $request): Collection
+    {
+        $needle = $request->validated('needle');
+
+        return Product::where('name', 'LIKE', "%{$needle}%")->get();
+    }
 }

@@ -40,7 +40,6 @@
                         <p class="px-1 py-1 text-white font-bold text-sm bg-amber-700 rounded-2xl text-right">Left: {{ $product->quantity_left }}</p>
                     </div>
                     @if (session('user_role') != 'admin')
-
                         <div class="mt-3 flex items-center justify-between space-x-2">
                             <div>
                                 <button type="button"
@@ -75,6 +74,9 @@
         window.indexProducts.routes = {
             search:'{{ route("products.search") , }}',
             addToCart: '{{ route("cart.add") }}',
+        }
+        window.indexProducts.vars = {
+            csrf: '{{ csrf_token() }}',
         }
     </script>
 </x-app-layout>

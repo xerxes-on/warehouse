@@ -45,9 +45,9 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function shipment(): BelongsTo
+    public function shipments(): HasMany
     {
-        return $this->belongsTo(Shipment::class);
+        return $this->hasMany(Shipment::class);
     }
 
     public function getSubtotal(): float

@@ -21,7 +21,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::resource('products', ProductController::class);
-    Route::get('products/search', [ProductController::class, 'searchProduct'])->name('products.search');
+    Route::get('search/products', [ProductController::class, 'searchProduct'])->name('products.search');
 
     Route::middleware('admin')->controller(ShipmentController::class)->group(function () {
         Route::get('shipment', 'index')->name('shipment.index');

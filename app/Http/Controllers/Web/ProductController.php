@@ -6,24 +6,25 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Products\CreateProductRequest;
+use App\Http\Requests\Products\SearchProductsRequest;
+use App\Http\Traits\CanSendJsonResponse;
 use App\Http\Traits\CanSetFlashMessageTrait;
 use App\Models\Product;
 use App\Services\ProductService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class ProductController extends Controller
 {
-    use CanSetFlashMessageTrait;
+    use CanSetFlashMessageTrait, CanSendJsonResponse;
 
     public function __construct()
     {
-        $this->middleware('admin')->only([
-            'store',
-            'destroy',
-            'create',
-            'update',
-            'edit',
+        $this->middleware('admin')->except([
+            'index',
+            'show',
+            'searchProduct'
         ]);
     }
 
@@ -60,6 +61,7 @@ class ProductController extends Controller
      */
     public function show(Product $product): View
     {
+//        $product->quantity_left =
         return view('client.products.show', ['product' => $product]);
     }
 
@@ -91,5 +93,9 @@ class ProductController extends Controller
         $this->setMessage('Product deleted successfully');
 
         return redirect()->route('products.index');
+    }
+    public function searchProduct(SearchProductsRequest $request, ProductService $service): JsonResponse
+    {
+        return $this->sendResponse($service->searchProduct($request));
     }
 }

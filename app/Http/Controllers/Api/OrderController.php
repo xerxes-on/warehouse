@@ -19,7 +19,7 @@ class OrderController extends Controller
 
     public function index(): JsonResponse
     {
-        return $this->sendResponse(Order::all());
+        return $this->sendResponse(['orders' => Order::all()]);
     }
 
 
@@ -29,7 +29,7 @@ class OrderController extends Controller
         $branches = Cache::remember('branches', now()->addDay(), function () {
             return Branch::all();
         });
-        return $this->sendResponse([$details, $branches]);
+        return $this->sendResponse(['details' => $details, 'branches' => $branches]);
     }
 
     public function update(ChangeOrderStatusRequest $request, Order $order, OrderService $service): JsonResponse
@@ -40,6 +40,11 @@ class OrderController extends Controller
         } catch (Exception $e) {
             return $this->sendError($e->getMessage());
         }
+    }
+
+    public function cart(): JsonResponse
+    {
+        return $this->sendResponse(['cart' => auth()->user()->cart->load('orderItems')]);
     }
 
 }
