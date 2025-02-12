@@ -59,7 +59,6 @@ class OrderItemService
 
     public function editItems(EditProductRequest $request): bool
     {
-        //        TODO: need to optimize this
         $data = $request->validated();
         $order = auth()->user()->cart;
         foreach ($data['products'] as $item) {

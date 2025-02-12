@@ -39,10 +39,13 @@ class OrderService
             $this->createShipments($order, $allocations, $branchId);
 
             $calcService = new OrderCalculationService();
+            $result =  $calcService->calculateOrder($order);
             $order->update([
                 'status' => OrderStatus::from($newStatusValue),
-                'total_price' => $calcService->calculateOrder($order)['total'],
+                'total_price' =>$result['total'],
             ]);
+
+            Cache::forever('order_calculation_' . $order->id, $result);
 
             DB::commit();
             Cache::forget('products');

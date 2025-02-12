@@ -18,7 +18,7 @@ class WarehouseProductsSeeder extends Seeder
             ProductWarehouse::create([
                 'product_id'   => $product->id,
                 'warehouse_id' => $randomWarehouse->id,
-                'amount'       => rand(1, 450),
+                'amount'       => rand(1, 50),
             ]);
         }
     }

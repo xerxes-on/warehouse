@@ -39,9 +39,6 @@ class OrderCalculationService
             'discount' => $discount,
             'hasDiscount' => $discount > 0,
         ];
-        if ($order->status !== OrderStatus::CART) {
-            Cache::forever('order_calculation_' . $order->id, $result);
-        }
 
         return $result;
     }
@@ -55,7 +52,7 @@ class OrderCalculationService
             $dayOfWeek = $today->format('N');
             $dayOfMonth = $today->format('j');
 
-            return $dayOfWeek == 6 && $dayOfMonth >= 8 && $dayOfMonth <= 14;
+            return $dayOfWeek == 4 && $dayOfMonth >= 8 && $dayOfMonth <= 14;
         });
     }
 

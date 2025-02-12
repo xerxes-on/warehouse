@@ -43,7 +43,7 @@ $(document).ready(function () {
                     $('#totals-table #tax-row td:last-child').text('$' + d.tax);
                     $('#totals-table #store-fee-row td:last-child').text('$' + d.storeFee);
                     $('#totals-table #duties-row td:last-child').text('$' + d.dutiesFee);
-                    $('#totals-table #total-row td:last-child').text('$' + d.total);
+                    $('#totals-table #total-row td:last-child').text('$' + d.total.toFixed(2));
                 }
             },
             error: function () {
