@@ -52,7 +52,7 @@ class OrderCalculationService
             $dayOfWeek = $today->format('N');
             $dayOfMonth = $today->format('j');
 
-            return $dayOfWeek == 4 && $dayOfMonth >= 8 && $dayOfMonth <= 14;
+            return $dayOfWeek == 6 && $dayOfMonth >= 8 && $dayOfMonth <= 14;
         });
     }
 
