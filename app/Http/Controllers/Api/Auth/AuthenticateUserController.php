@@ -35,10 +35,11 @@ class AuthenticateUserController extends Controller
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
-        Auth::attempt(['email' => $user->email, 'password' => $user->password]);
+        Auth::login($user);
+        session(['user_role' => auth()->user()->role->name]);
         $token = $user->createToken('client_token')->plainTextToken;
 
-        return $this->sendResponse(['token' => $token]);
+        return $this->sendResponse(['token' => $token, 'user' => $user->load('cart')]);
     }
 
     /**
@@ -65,9 +66,9 @@ class AuthenticateUserController extends Controller
 
         event(new Registered($user));
         Auth::login($user);
-
+        session(['user_role' => auth()->user()->role->name]);
         $token = $user->createToken('client_token')->plainTextToken;
-        return $this->sendResponse(['token' => $token, 'cart' => $user->cart]);
+        return $this->sendResponse(['token' => $token, 'user' => $user->load('cart')]);
     }
 
     /**
