@@ -23,13 +23,14 @@ onMounted(async () => {
             response = await shipmentsAPi.index();
         }
         shipments.value = response.data.data.shipments
-        useMainStore().unsetLoading()
     } catch (err) {
         toast(`Oops ${err}`, {
             theme: "auto",
             type: "error",
             autoClose: 2000,
         });
+    } finally {
+        useMainStore().unsetLoading()
     }
 });
 </script>

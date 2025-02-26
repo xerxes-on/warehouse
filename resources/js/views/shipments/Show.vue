@@ -24,13 +24,14 @@ onMounted(async () => {
             const calculationsRes = await shipmentsAPi.calculations(shipment.value.order.id);
             calculations.value = calculationsRes.data.data.calculations;
         }
-        useMainStore().unsetLoading()
     } catch (err) {
         toast(`Oops ${err}`, {
             "theme": "auto",
             "type": "error",
             "autoClose": 2000,
         })
+    } finally {
+        useMainStore().unsetLoading()
     }
 });
 const mark = async (status) => {
@@ -40,8 +41,6 @@ const mark = async (status) => {
         if (response.status === 200) {
             refreshDetails(status)
         }
-
-        useMainStore().unsetLoading()
         toast("Changed successfully", {
             "theme": "auto",
             "type": "success",
@@ -53,6 +52,8 @@ const mark = async (status) => {
             "type": "error",
             "autoClose": 2000,
         })
+    } finally {
+        useMainStore().unsetLoading()
     }
 }
 const refreshDetails = (status) => {
@@ -126,7 +127,7 @@ const refreshDetails = (status) => {
                                     </tr>
                                     </thead>
                                     <tbody class="divide-y divide-gray-600">
-                                    <tr v-for="item in shipment.shipment_items">
+                                    <tr v-for="item in shipment.shipment_items" :key="item.id">
                                         <td class="px-4 py-2 text-white">{{ item.order_item.product.name }}</td>
                                         <td class="px-4 py-2 text-gray-300">
                                             ${{ item.order_item.product.price ?? 'N/A' }}

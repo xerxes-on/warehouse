@@ -24,13 +24,14 @@ onMounted(async () => {
             response = await ordersApi.getAll();
         }
         orders.value = response.data.data.orders
-        useMainStore().unsetLoading()
     } catch (err) {
         toast(`Oops ${err}`, {
             theme: "auto",
             type: "error",
             autoClose: 2000,
         });
+    } finally {
+        useMainStore().unsetLoading()
     }
 });
 </script>
@@ -43,7 +44,7 @@ onMounted(async () => {
                     <h1 class="text-2xl font-bold text-white mb-6">Orders</h1>
                 </div>
                 <div class="grid grid-cols-1 mt-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    <div v-for="order in orders" class="border border-gray-300 shadow rounded-lg p-1">
+                    <div v-for="order in orders" :key="order.id" class="border border-gray-300 shadow rounded-lg p-1">
                         <p v-if="order.shipment_id" class="text-amber-500 font-bold">
                             {{ ShipmentStatus.toString(order.shipment.status) }}</p>
                         <a :href="'/orders/show/'+order.id">

@@ -24,13 +24,14 @@ onMounted(async () => {
         }
         order.value = response.data.data.order
         calculations.value = response.data.data.details
-        useMainStore().unsetLoading()
     } catch (err) {
         toast(`Oops ${err}`, {
             "theme": "auto",
             "type": "error",
             "autoClose": 2000,
         })
+    } finally {
+        useMainStore().unsetLoading()
     }
 });
 

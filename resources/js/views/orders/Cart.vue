@@ -39,13 +39,14 @@ onMounted(async () => {
             throw new Error('Something went really wrong with branch api')
         }
         branches.value = branchesRes.data.data.branches
-        useMainStore().unsetLoading()
     } catch (err) {
         toast(`Oops ${err}`, {
             "theme": "auto",
             "type": "error",
             "autoClose": 2000,
         })
+    } finally {
+        useMainStore().unsetLoading()
     }
 });
 
@@ -93,13 +94,14 @@ const deleteSelected = async () => {
             selectedProducts.value = []
             await refreshCartData()
         }
-        useMainStore().unsetLoading()
     } catch (err) {
         toast(`Oops ${err}`, {
             "theme": "auto",
             "type": "error",
             "autoClose": 2000,
         })
+    } finally {
+        useMainStore().unsetLoading()
     }
 };
 const saveEdited = async () => {
