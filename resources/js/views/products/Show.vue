@@ -5,23 +5,41 @@ import productsApi from "@/api/products.js";
 import {toast} from "vue3-toastify";
 import {useRoute, useRouter} from "vue-router";
 import MainLayout from "@/components/layouts/MainLayout.vue";
+import Product from "@/components/products/Product.vue";
 import Update from "@/views/products/Update.vue";
+import {useMainStore} from "@/stores/main.js";
 
 const isAdmin = useAuthStore().isAdmin
-const product = ref('')
+const product = ref()
+const products = ref()
 
 const route = useRoute()
 const router = useRouter()
 onMounted(async () => {
     try {
+        useMainStore().setLoading()
         const response = await productsApi.show(route.params.id)
+        const responseIndex = await productsApi.index('/')
+
+        if (!response || !responseIndex || response.status !== 200 || responseIndex.status !== 200) {
+            toast(`${response?.data?.message || 'Error'}/${responseIndex?.data?.message || 'Error'}`, {
+                theme: "auto",
+                type: "warning",
+                autoClose: 3000,
+            })
+            return
+        }
         product.value = response.data.data.product
+        products.value = responseIndex.data.data.products.data
+        product.value.amount = 1
     } catch (err) {
-        toast(`Oops ${err}`, {
-            "theme": "auto",
-            "type": "error",
-            "autoClose": 2000,
+        toast(`Oops ${err.message || err}`, {
+            theme: "auto",
+            type: "error",
+            autoClose: 2000,
         })
+    } finally {
+        useMainStore().unsetLoading()
     }
 })
 const destroy = async () => {
@@ -48,38 +66,15 @@ const destroy = async () => {
 <template>
     <MainLayout>
         <template #content>
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <h1 class="text-2xl font-bold text-white mb-6">Product</h1>
-                <div class="flex justify-between product-card items-center">
-                    <div class="rounded-lg">
-                        <img src="/images/cat.jpg"
-                             alt="Random Cat for {{ product.name }}"
-                             class="h-48 w-full object-cover rounded-t-lg">
-                        <div class="p-4">
-                            <h2 class="text-lg font-semibold text-gray-200">{{ product.name }}</h2>
-                            <p class="text-gray-600 mt-2">{{ product.description }}</p>
-                            <div class="mt-4 flex justify-between items-center">
-                            <span
-                                class="text-xl font-bold text-gray-200">${{ product.price }}</span>
-                                <form v-if="isAdmin" @submit.prevent="destroy">
-                                    <button type="submit" onclick="confirm('Are you sure to delete?')"
-                                            class="text-indigo-600 hover:underline">
-                                        <i class="fa-solid fa-trash" style="color: #ff2e2e;"></i>
-                                    </button>
-                                </form>
-                                <div v-else class="mt-3 flex items-center justify-between space-x-2">
-                                    <button>
-                                        <i class="fa-solid fa-cart-shopping" style="color: #ff2e2e;"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div v-if="isAdmin" class="px-4 sm:px-6 lg:px-8 py-6 w-1/2">
-                        <h1 class="text-2xl font-bold text-white mb-6">Edit</h1>
-                        <Update :product="product"/>
-                    </div>
-                </div>
+            <button @click="destroy" v-if="isAdmin"
+                    class="text-gray-300 font-bold bg-amber-700 px-4 py-2 rounded-2xl mr-10">Delete
+            </button>
+            <div class="rounded-lg flex items-center justify-center p-2 shadow-xl relative">
+                <Product v-if="products" :product-show="product" :products-all="products"/>
+            </div>
+            <div v-if="isAdmin" class="px-4 mx-auto sm:px-6 lg:px-8 py-6 w-1/2">
+                <h1 class="text-2xl font-bold text-white mb-6">Edit</h1>
+                <Update v-if="product" :product="product"/>
             </div>
         </template>
     </MainLayout>

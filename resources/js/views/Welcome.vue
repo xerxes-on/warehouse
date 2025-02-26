@@ -1,10 +1,5 @@
 <script setup>
-
 import Guest from "@/components/layouts/Guest.vue";
-import {useAuthStore} from "@/stores/auth.js";
-
-console.log(useAuthStore().isAuthorized)
-
 </script>
 <template>
     <Guest>

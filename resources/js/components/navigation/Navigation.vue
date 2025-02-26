@@ -1,38 +1,39 @@
 <script setup>
-import {ref} from "vue";
-import {useAuthStore} from "@/stores/auth.js";
-import {useRouter} from "vue-router";
-import {onClickOutside} from '@vueuse/core';
+import {ref} from "vue"
+import {useAuthStore} from "@/stores/auth.js"
+import {useRouter} from "vue-router"
+import {onClickOutside} from '@vueuse/core'
 
-const authStore = useAuthStore();
-const router = useRouter();
+const authStore = useAuthStore()
+const router = useRouter()
 
 const dropdownState = ref({
     orders: false,
     shipments: false,
     user: false
-});
+})
 
-const ordersDropdownRef = ref(null);
-const shipmentsDropdownRef = ref(null);
-const userDropdownRef = ref(null);
+const ordersDropdownRef = ref(null)
+const shipmentsDropdownRef = ref(null)
+const userDropdownRef = ref(null)
 
-onClickOutside(ordersDropdownRef, () => dropdownState.value.orders = false);
-onClickOutside(shipmentsDropdownRef, () => dropdownState.value.shipments = false);
-onClickOutside(userDropdownRef, () => dropdownState.value.user = false);
+onClickOutside(ordersDropdownRef, () => dropdownState.value.orders = false)
+onClickOutside(shipmentsDropdownRef, () => dropdownState.value.shipments = false)
+onClickOutside(userDropdownRef, () => dropdownState.value.user = false)
 
 const toggleDropdown = (name) => {
     Object.keys(dropdownState.value).forEach(key => {
-        if (key !== name) dropdownState.value[key] = false;
+        if (key !== name) dropdownState.value[key] = false
     });
 
     dropdownState.value[name] = !dropdownState.value[name];
 };
 
 const logout = () => {
-    authStore.resetStore();
+    authStore.resetStore()
     router.push("/");
 };
+const isAdmin = authStore.isAdmin
 </script>
 
 <template>
@@ -64,7 +65,7 @@ const logout = () => {
                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">Delivered</a>
                         </div>
                     </div>
-                    <div ref="shipmentsDropdownRef" class="relative">
+                    <div v-if="isAdmin" ref="shipmentsDropdownRef" class="relative">
                         <button
                             @click="toggleDropdown('shipments')"
                             class="flex items-center px-3 py-2 border border-transparent text-md font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition duration-150"
@@ -92,7 +93,7 @@ const logout = () => {
                     </div>
                 </div>
                 <div class="flex items-center space-x-6">
-                    <RouterLink to="cart" v-if="!authStore.isAdmin">
+                    <RouterLink to="/cart" v-if="!isAdmin">
                         <i class="fa-solid fa-cart-shopping" style="color: #ff2e2e;"></i>
                     </RouterLink>
                     <div ref="userDropdownRef" class="relative">
@@ -124,16 +125,6 @@ const logout = () => {
     </nav>
 </template>
 <style scoped>
-.dropdown-enter-active,
-.dropdown-leave-active {
-    transition: opacity 0.2s ease;
-}
-
-.dropdown-enter-from,
-.dropdown-leave-to {
-    opacity: 0;
-}
-
 a {
     font-size: large;
     color: #acacac;

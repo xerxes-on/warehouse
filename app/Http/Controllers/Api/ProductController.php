@@ -9,6 +9,7 @@ use App\Http\Requests\Products\CreateProductRequest;
 use App\Http\Requests\Products\SearchProductsRequest;
 use App\Http\Traits\CanSendJsonResponse;
 use App\Models\Product;
+use App\Models\ProductWarehouse;
 use App\Services\ProductService;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\JsonResponse;
@@ -25,6 +26,9 @@ class ProductController extends Controller
 
     public function show(Product $product): JsonResponse
     {
+        $product['quantity_left'] = ProductWarehouse::where('product_id', $product->id)
+            ->where('amount', '>', 0)
+            ->sum('amount');
         return $this->sendResponse(['product' => $product]);
     }
 

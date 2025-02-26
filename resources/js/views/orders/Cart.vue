@@ -7,6 +7,7 @@ import {OrderStatus} from "@/enums/orderStatus.js";
 import MainLayout from "@/components/layouts/MainLayout.vue";
 import OrderTotals from "@/components/order/OrderTotals.vue";
 import {useMainStore} from "@/stores/main.js";
+import {useRouter} from "vue-router";
 
 const selectedProducts = ref([])
 const editedProducts = ref([])
@@ -15,6 +16,7 @@ const branches = ref()
 const orderItems = ref()
 const calculations = ref()
 const isStatusCart = computed(() => order.value.status === OrderStatus.CART)
+const router = useRouter()
 
 onMounted(async () => {
     try {
@@ -158,6 +160,7 @@ const placeOrder = async () => {
                 "type": "success",
                 "autoClose": 2000,
             })
+            await router.push('/orders/show/'+ order.value.id)
         }
         useMainStore().unsetLoading()
     } catch (err) {
