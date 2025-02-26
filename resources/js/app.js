@@ -1,6 +1,6 @@
 import './bootstrap';
-import './showOrder.js';
-import './indexProducts.js';
+// import './showOrder.js';
+// import './indexProducts.js';
 import Alpine from 'alpinejs';
 import {createApp} from 'vue'
 import {registerPlugins} from "@/plugins/index.js";
