@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia'
 import {useAuthStore} from "@/stores/auth.js";
 
 const client = axios.create({
-    baseURL: 'https://warehouse.ddev.site/api',
+    baseURL: import.meta.env.VITE_API_URL,
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

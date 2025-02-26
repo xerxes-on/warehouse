@@ -21,10 +21,14 @@ class OrderController extends Controller
 
     public function index(GetOrderRequest $request): JsonResponse
     {
-        if (isset($request->status)) {
-            return $this->sendResponse(['orders' => Order::all()->where('status', OrderStatus::from($request->status))->load('shipments')]);
+        $query = Order::with('shipments');
+
+        if ($request->filled('status')) {
+            $query->where('status', OrderStatus::from($request->status));
+        } else {
+            $query->where('status', '!=', OrderStatus::CART);
         }
-        return $this->sendResponse(['orders' => Order::all()->where('status','!=', OrderStatus::CART)->load('shipments')]);
+        return $this->sendResponse(['orders' => $query->get()]);
     }
 
 
