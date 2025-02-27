@@ -36,31 +36,29 @@ const price = ref()
 
 <template>
     <MainLayout>
-        <template #content>
-            <div class="flex justify-center items-center">
-                <form @submit.prevent="createProduct"
-                      class="border border-gray-400 rounded-lg p-6 space-y-6 w-1/2 mt-10">
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-300">Product Name</label>
-                        <input type="text" v-model="name"
-                               class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                               required>
-                    </div>
-                    <div>
-                        <label for="price" class="block text-sm font-medium text-gray-300">Price</label>
-                        <input type="number" v-model="price"
-                               class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                               required min="1">
-                    </div>
-                    <div class="text-right">
-                        <button type="submit"
-                                class="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700">
-                            Create
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </template>
+        <div class="flex justify-center items-center">
+            <form @submit.prevent="createProduct"
+                  class="border border-gray-400 rounded-lg p-6 space-y-6 w-1/2 mt-10">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-300">Product Name</label>
+                    <input type="text" v-model="name"
+                           class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                           required>
+                </div>
+                <div>
+                    <label for="price" class="block text-sm font-medium text-gray-300">Price</label>
+                    <input type="number" v-model="price"
+                           class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                           required min="1">
+                </div>
+                <div class="text-right">
+                    <button type="submit"
+                            class="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700">
+                        Create
+                    </button>
+                </div>
+            </form>
+        </div>
     </MainLayout>
 </template>
 

@@ -4,9 +4,7 @@ import Guest from "@/components/layouts/Guest.vue";
 </script>
 
 <template>
-<Guest>
-    <template #content>
+    <Guest>
         <img :src="'/images/404.png'" alt="404 img" class="w-fit h-fit ">
-    </template>
-</Guest>
+    </Guest>
 </template>

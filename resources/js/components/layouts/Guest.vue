@@ -19,7 +19,7 @@ onMounted(() => {
             <div class="absolute w-64 h-64 bg-white/10 rounded-full top-1/4 left-1/4 animate-float"></div>
             <div class="absolute w-48 h-48 bg-white/5 rounded-full bottom-1/4 right-1/4 animate-float-delay"></div>
             <div class="absolute w-32 h-32 bg-white/10 rounded-full bottom-1/3 left-1/3 animate-pulse-slow"></div>
-            <slot name="content"></slot>
+            <slot></slot>
         </div>
     </div>
 </template>

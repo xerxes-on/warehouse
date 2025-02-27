@@ -13,8 +13,15 @@ const register = (credentials) => {
         .then((response) => response)
         .catch((error) => error.response)
 }
+const forgotPassword = (email) => {
+    return client
+        .post('/forgot-password', email)
+        .then((response) => response)
+        .catch((error) => error.response)
+}
 const authAPI = {
     login,
     register,
+    forgotPassword
 }
 export default authAPI

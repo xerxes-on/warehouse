@@ -5,11 +5,14 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\OrderItemController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ShipmentController;
+use App\Http\Controllers\Auth\NewPasswordController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('register', [AuthenticateUserController::class, 'register']);
-Route::post('login', [AuthenticateUserController::class, 'login']);
-Route::post('/forgot-password', [AuthenticateUserController::class, 'resetPassword']);
+Route::controller(AuthenticateUserController::class)->group(function (){
+    Route::post('login',  'login');
+    Route::post('register',  'register');
+    Route::post('forgot-password',  'resetPassword');
+});
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [AuthenticateUserController::class, 'logout']);
@@ -44,6 +47,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/shipment/update/{shipment}', 'update');
     });
 });
-
+Route::middleware('guest')->group(function () {
+    Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
+        ->name('password.reset');
+    Route::post('reset-password', [NewPasswordController::class, 'store'])
+        ->name('password.store');
+});
 
 

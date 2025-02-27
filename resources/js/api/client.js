@@ -22,9 +22,4 @@ client.interceptors.request.use(
         return Promise.reject(error)
     }
 )
-client.interceptors.response.use(
-    (response) => {
-        return response
-    }
-)
 export default client

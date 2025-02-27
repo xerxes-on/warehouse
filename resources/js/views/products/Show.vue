@@ -6,7 +6,7 @@ import {toast} from "vue3-toastify";
 import {useRoute, useRouter} from "vue-router";
 import MainLayout from "@/components/layouts/MainLayout.vue";
 import Product from "@/components/products/Product.vue";
-import Update from "@/views/products/Update.vue";
+import Update from "@/components/products/Update.vue";
 import {useMainStore} from "@/stores/main.js";
 
 const isAdmin = useAuthStore().isAdmin
@@ -65,17 +65,15 @@ const destroy = async () => {
 
 <template>
     <MainLayout>
-        <template #content>
-            <button @click="destroy" v-if="isAdmin"
-                    class="text-gray-300 font-bold bg-amber-700 px-4 py-2 rounded-2xl mr-10">Delete
-            </button>
-            <div class="rounded-lg flex items-center justify-center p-2 shadow-xl relative">
-                <Product v-if="products" :product-show="product" :products-all="products"/>
-            </div>
-            <div v-if="isAdmin" class="px-4 mx-auto sm:px-6 lg:px-8 py-6 w-1/2">
-                <h1 class="text-2xl font-bold text-white mb-6">Edit</h1>
-                <Update v-if="product" :product="product"/>
-            </div>
-        </template>
+        <button @click="destroy" v-if="isAdmin"
+                class="text-gray-300 font-bold bg-amber-700 px-4 py-2 rounded-2xl mr-10">Delete
+        </button>
+        <div class="rounded-lg flex items-center justify-center p-2 shadow-xl relative">
+            <Product v-if="products" :product-show="product" :products-all="products"/>
+        </div>
+        <div v-if="isAdmin" class="px-4 mx-auto sm:px-6 lg:px-8 py-6 w-1/2">
+            <h1 class="text-2xl font-bold text-white mb-6">Edit</h1>
+            <Update v-if="product" :product="product"/>
+        </div>
     </MainLayout>
 </template>
