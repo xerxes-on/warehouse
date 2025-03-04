@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\OrderStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Orders\ChangeOrderStatusRequest;
+use App\Http\Requests\Orders\GetOrderRequest;
 use App\Http\Traits\CanSendJsonResponse;
 use App\Models\Branch;
 use App\Models\Order;
@@ -17,9 +19,16 @@ class OrderController extends Controller
 {
     use CanSendJsonResponse;
 
-    public function index(): JsonResponse
+    public function index(GetOrderRequest $request): JsonResponse
     {
-        return $this->sendResponse(['orders' => Order::all()]);
+        $query = Order::with('shipments');
+
+        if ($request->filled('status')) {
+            $query->where('status', OrderStatus::from($request->status));
+        } else {
+            $query->where('status', '!=', OrderStatus::CART);
+        }
+        return $this->sendResponse(['orders' => $query->get()]);
     }
 
 
@@ -29,7 +38,11 @@ class OrderController extends Controller
         $branches = Cache::remember('branches', now()->addDay(), function () {
             return Branch::all();
         });
-        return $this->sendResponse(['details' => $details, 'branches' => $branches]);
+        return $this->sendResponse([
+            'order' => $order->load('orderItems', 'shipments'),
+            'details' => $details,
+            'branches' => $branches,
+        ]);
     }
 
     public function update(ChangeOrderStatusRequest $request, Order $order, OrderService $service): JsonResponse
@@ -42,9 +55,20 @@ class OrderController extends Controller
         }
     }
 
-    public function cart(): JsonResponse
+    public function cart(OrderCalculationService $calculator): JsonResponse
     {
-        return $this->sendResponse(['cart' => auth()->user()->cart->load('orderItems')]);
+        $calculations = $calculator->calculateOrder(auth()->user()->cart);
+        return $this->sendResponse(['cart' => auth()->user()->cart->load('orderItems'), 'calculations' => $calculations]);
     }
+
+    public function getBranches(): JsonResponse
+    {
+        return $this->sendResponse(['branches' => Branch::all()]);
+    }
+    public function calculations(Order $order, OrderCalculationService $service): JsonResponse
+    {
+        return $this->sendResponse(['calculations' => $service->calculateOrder($order)]);
+    }
+
 
 }
