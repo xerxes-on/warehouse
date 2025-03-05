@@ -11,21 +11,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Parse deployment secrets
-        id: parse
-        run: |
-          echo "SSH_USERNAME=$(echo '${{ secrets.DEPLOY }}' | grep SSH_USERNAME | cut -d: -f2- | xargs)" >> $GITHUB_OUTPUT
-          echo "SSH_HOST=$(echo '${{ secrets.DEPLOY }}' | grep SSH_HOST | cut -d: -f2- | xargs)" >> $GITHUB_OUTPUT
-          echo "SSH_PORT=$(echo '${{ secrets.DEPLOY }}' | grep SSH_PORT | cut -d: -f2- | xargs)" >> $GITHUB_OUTPUT
-          echo "SSH_PASSWORD=$(echo '${{ secrets.DEPLOY }}' | grep SSH_PASSWORD | cut -d: -f2- | xargs)" >> $GITHUB_OUTPUT
-          echo "FTP_SERVER=$(echo '${{ secrets.DEPLOY }}' | grep FTP_SERVER | cut -d: -f2- | xargs)" >> $GITHUB_OUTPUT
-          echo "FTP_USERNAME=$(echo '${{ secrets.DEPLOY }}' | grep FTP_USERNAME | cut -d: -f2- | xargs)" >> $GITHUB_OUTPUT
-          echo "FTP_PASSWORD=$(echo '${{ secrets.DEPLOY }}' | grep FTP_PASSWORD | cut -d: -f2- | xargs)" >> $GITHUB_OUTPUT
-          echo "SERVER_DIR=$(echo '${{ secrets.DEPLOY }}' | grep SERVER_DIR | cut -d: -f2- | xargs)" >> $GITHUB_OUTPUT
-          echo "SSH_KEY<<EOF" >> $GITHUB_OUTPUT
-          echo '${{ secrets.DEPLOY }}' | grep -A100 "SSH_KEY:" | cut -d'"' -f2 >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
       - name: Download php
         uses: shivammathur/setup-php@v2
         with:
@@ -54,11 +39,11 @@ jobs:
       - name: Deploy to cpanel
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ${{ steps.parse.outputs.FTP_SERVER }}
-          username: ${{ steps.parse.outputs.FTP_USERNAME }}
-          password: ${{ steps.parse.outputs.FTP_PASSWORD }}
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
-          server-dir: ${{ steps.parse.outputs.SERVER_DIR }}
+          server-dir: ${{ secrets.SERVER_DIR }}
           exclude: |
             **/.git*
             **/.git*/**
@@ -68,11 +53,11 @@ jobs:
       - name: Run post-deployment commands via SSH
         uses: appleboy/ssh-action@v1.2.1
         with:
-          host: ${{ steps.parse.outputs.SSH_HOST }}
-          username: ${{ steps.parse.outputs.SSH_USERNAME }}
-          password: ${{ steps.parse.outputs.SSH_PASSWORD }}
-          key: ${{ steps.parse.outputs.SSH_KEY }}
-          port: ${{ steps.parse.outputs.SSH_PORT }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
           script: |
             cd ${{ steps.parse.outputs.SERVER_DIR }}
             php artisan migrate --force
