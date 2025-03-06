@@ -41,7 +41,7 @@ jobs:
           username: github-actions@warehouse-test.xerxes.uz
           password: D^d2(c[wWjvI
           local-dir: ./
-          server-dir: /home/anvarcon/warehouse-test.xerxes.uz
+          server-dir: /home/anvarcon/warehouse-test.xerxes.uz/
           exclude: |
             **/.git*
             **/.git*/**
@@ -85,7 +85,7 @@ jobs:
               -----END OPENSSH PRIVATE KEY-----
           port: 22
           script: |
-            cd /home/anvarcon/warehouse-test.xerxes.uz
+            cd /home/anvarcon/warehouse-test.xerxes.uz/
             php artisan migrate --force
             php artisan optimize
             php artisan cache:clear
