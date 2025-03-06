@@ -59,7 +59,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd ${{ steps.parse.outputs.SERVER_DIR }}
+            cd ${{ secrets.SERVER_DIR }}
             php artisan migrate --force
             php artisan optimize
             php artisan cache:clear
