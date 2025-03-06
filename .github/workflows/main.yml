@@ -11,16 +11,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         
-      - name: Debug Secrets
+      - name: Check Secret Values
         run: |
-          echo "FTP_SERVER starts with: ${FTP_SERVER:0:3}***"
-          echo "SERVER_DIR starts with: ${SERVER_DIR:0:3}***"
-          echo "SSH_HOST starts with: ${SSH_HOST:0:3}***"
-          echo "SSH_PORT is set: ${{ secrets.SSH_PORT != '' }}"
+          if [ "$FTP_SERVER" = "ftp.anvarcontact.uz" ]; then 
+            echo "FTP_SERVER matches expected value"
+          else 
+            echo "FTP_SERVER does NOT match"
+          fi
+          
+          if [ "$SSH_HOST" = "warehouse-test.xerxes.uz" ]; then 
+            echo "SSH_HOST matches expected value"
+          else 
+            echo "SSH_HOST does NOT match"
+          fi
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
-          SERVER_DIR: ${{ secrets.SERVER_DIR }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SERVER_DIR: ${{ secrets.SSH_HOST }}
           
       # - name: Deploy to cpanel
       #   uses: SamKirkland/FTP-Deploy-Action@v4.3.4
