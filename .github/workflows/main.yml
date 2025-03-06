@@ -41,6 +41,8 @@ jobs:
           username: github-actions@warehouse-test.xerxes.uz
           password: D^d2(c[wWjvI
           local-dir: ./
+          timeout: 120000
+          max-retries: 3
           server-dir: /home/anvarcon/warehouse-test.xerxes.uz/
           exclude: |
             **/.git*
