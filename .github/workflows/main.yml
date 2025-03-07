@@ -44,6 +44,10 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
           server-dir: ${{ secrets.SERVER_DIR }}
+          protocol: ftps    
+          security: loose            # Allows connection even with certificate issues
+          timeout: 60000             # Higher timeout
+          retries: 3 
           exclude: |
             **/.git*
             **/.git*/**
