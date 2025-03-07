@@ -36,37 +36,20 @@ jobs:
           rm -rf node_modules
           rm -rf tests
           
-      # - name: Deploy to cpanel
-      #   uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      #   with:
-      #     server: ${{ secrets.FTP_SERVER }}
-      #     username: ${{ secrets.FTP_USERNAME }}
-      #     password: ${{ secrets.FTP_PASSWORD }}
-      #     local-dir: ./
-      #     server-dir: ${{ secrets.SERVER_DIR }}
-      #     protocol: ftps    
-      #     security: loose            # Allows connection even with certificate issues
-      #     timeout: 60000             # Higher timeout
-      #     retries: 3 
-      #     exclude: |
-      #       **/.git*
-      #       **/.git*/**
-      #       **/node_modules/**
-      #       .env.example
-      - name: SFTP Deploy
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+      - name: Run post-deployment commands via SSH
+        uses: appleboy/ssh-action@v1.2.1
         with:
-          server: ${{ secrets.SSH_HOST }}
+          host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          ssh_private_key: ${{ secrets.SSH_KEY }}
-          local_path: "./dist/*"
-          remote_path: ${{ secrets.SERVER_DIR }}
-          # SCRIPT_AFTER: |
-          #   cd ${{ secrets.SERVER_DIR }}
-          #   php artisan migrate --force
-          #   php artisan optimize
-          #   php artisan cache:clear
-          #   php artisan config:cache
-          #   php artisan route:cache
-          #   php artisan view:cache
+          passphrase: ${{ secrets.SSH_KEY_PASSPHRASE }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd ${{ secrets.SERVER_DIR }}
+            git pull
+            php artisan migrate --force
+            php artisan optimize
+            php artisan cache:clear
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
