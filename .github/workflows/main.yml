@@ -1,49 +1,74 @@
-name: Deploying
+name: Deploy to cPanel
+
 on:
   push:
     branches:
       - main
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Download php
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
           extensions: mbstring, bcmath, pdo, pdo_mysql
-      
-      - name: Install Composer
-        run: composer install
-      
-      - name: Install Node js
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          
-      - name: install packages
-        run: npm i
-      
+
+      - name: Install NPM dependencies
+        run: npm ci
+        
+      - name: Create .env for build
+        run: |
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > .env
+
       - name: Build assets
         run: npm run build
-  
-          
-      - name: Run commands via SSH
+
+      - name: Prepare for deployment
+        run: |
+          # Remove files not needed in production
+          rm -rf node_modules
+          rm -rf tests
+
+      - name: Deploy to cPanel
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: ./
+          exclude: |
+            **/.git*
+            **/.git*/**
+             **/vendor/*/**
+            .env.example
+
+      - name: Run post-deployment commands via SSH
         uses: appleboy/ssh-action@v1.2.1
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
-          key: ${{ secrets.KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd ${{ secrets.SERVER_DIR }}
-            git pull
+            cd public_html
+            composer i --no-dev 
             php artisan migrate --force
+            php artisan storage:link
             php artisan optimize
             php artisan cache:clear
             php artisan config:cache
