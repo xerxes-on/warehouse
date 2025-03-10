@@ -43,20 +43,27 @@ jobs:
           rm -rf node_modules
           rm -rf tests
 
-      - name: Deploy to cPanel
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./
-          server-dir: ./
-          protocol: ftps 
-          exclude: |
-            **/.git*
-            **/.git*/**
-             **/vendor/*/**
-            .env.example
+      # - name: Deploy to cPanel
+      #   uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      #   with:
+      #     server: ${{ secrets.FTP_SERVER }}
+      #     username: ${{ secrets.FTP_USERNAME }}
+      #     password: ${{ secrets.FTP_PASSWORD }}
+      #     local-dir: ./
+      #     server-dir: ./
+      #     protocol: ftps 
+      #     exclude: |
+      #       **/.git*
+      #       **/.git*/**
+      #        **/vendor/*/**
+      #       .env.example
+
+      - name: Install lftp
+        run: sudo apt-get install lftp
+      
+      - name: Deploy with lftp
+        run: |
+          lftp -e "set ftp:ssl-allow no; open ${{ secrets.FTP_SERVER }}; user ${{ secrets.FTP_USERNAME }} ${{ secrets.FTP_PASSWORD }}; mirror -R --exclude-glob .git* --exclude-glob vendor/** ./ ./; bye"
 
       - name: Run post-deployment commands via SSH
         uses: appleboy/ssh-action@v1.2.1
