@@ -42,21 +42,7 @@ jobs:
           # Remove files not needed in production
           rm -rf node_modules
           rm -rf tests
-
-      # - name: Deploy to cPanel
-      #   uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      #   with:
-      #     server: ${{ secrets.FTP_SERVER }}
-      #     username: ${{ secrets.FTP_USERNAME }}
-      #     password: ${{ secrets.FTP_PASSWORD }}
-      #     local-dir: ./
-      #     server-dir: ./
-      #     protocol: ftps 
-      #     exclude: |
-      #       **/.git*
-      #       **/.git*/**
-      #        **/vendor/*/**
-      #       .env.example
+          rm -rf .env
 
       - name: Install lftp
         run: sudo apt-get install lftp
